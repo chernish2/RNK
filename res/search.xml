@@ -1,0 +1,562 @@
+<?xml version="1.0"?>
+<result xmlns="http://hh.ru/api">
+    <found>2077</found>
+    <vacancies>
+        <vacancy id="4968518">
+            <link rel="self" type="application/xml" href="http://api.hh.ru/1/xml/vacancy/4968518/"/>
+            <link rel="alternate" type="text/html" href="http://hh.ru/vacancy/4968518"/>
+            <name>Project manager (менеджер проекта)</name>
+            <employer id="221933">
+                <link rel="self" type="application/xml" href="http://api.hh.ru/1/xml/employer/221933/"/>
+                <link rel="alternate" type="text/html" href="http://hh.ru/employer/221933"/>
+                <name>Generation_P Consulting</name>
+                <logos>
+                    <link rel="small" href="http://hh.ru/employer-logo/352709.png"/>
+                    <link rel="medium" href="http://hh.ru/employer-logo/425566.png"/>
+                </logos>
+            </employer>
+            <update year="2011" month="10" day="14" hour="17" minute="44" second="11" gmt="+04:00"
+                    timestamp="1318599851">2011-10-14T17:44:11.070+04:00
+            </update>
+            <salary>
+                <notset/>
+            </salary>
+            <region xmlns="" id="1002">
+                <name>Минск</name>
+            </region>
+            <site>http://hh.ru</site>
+            <address>
+                <lng>27.5165407173336</lng>
+                <lat>53.9106442037594</lat>
+                <city>Минск</city>
+                <street>Скрыганова</street>
+                <building>6А</building>
+            </address>
+        </vacancy>
+        <vacancy id="4967643">
+            <link rel="self" type="application/xml" href="http://api.hh.ru/1/xml/vacancy/4967643/"/>
+            <link rel="alternate" type="text/html" href="http://hh.ru/vacancy/4967643"/>
+            <name>Java developer</name>
+            <employer id="763432">
+                <link rel="self" type="application/xml" href="http://api.hh.ru/1/xml/employer/763432/"/>
+                <link rel="alternate" type="text/html" href="http://hh.ru/employer/763432"/>
+                <name>Oxagile</name>
+                <logos>
+                    <link rel="small" href="http://hh.ru/employer-logo/597134.png"/>
+                    <link rel="medium" href="http://hh.ru/employer-logo/597135.png"/>
+                </logos>
+            </employer>
+            <update year="2011" month="10" day="14" hour="15" minute="49" second="59" gmt="+04:00"
+                    timestamp="1318592999">2011-10-14T15:49:59.040+04:00
+            </update>
+            <salary>
+                <notset/>
+            </salary>
+            <region xmlns="" id="1002">
+                <name>Минск</name>
+            </region>
+            <site>http://hh.ru</site>
+            <address>
+                <lng>27.542652</lng>
+                <lat>53.906453</lat>
+                <city>Минск</city>
+                <street>Мельникайте</street>
+                <building>4</building>
+            </address>
+        </vacancy>
+        <vacancy id="4967440">
+            <link rel="self" type="application/xml" href="http://api.hh.ru/1/xml/vacancy/4967440/"/>
+            <link rel="alternate" type="text/html" href="http://hh.ru/vacancy/4967440"/>
+            <name>Lead Java developer</name>
+            <employer id="544356">
+                <link rel="self" type="application/xml" href="http://api.hh.ru/1/xml/employer/544356/"/>
+                <link rel="alternate" type="text/html" href="http://hh.ru/employer/544356"/>
+                <name>Статус, Кадровый центр</name>
+                <logos>
+                    <link rel="small" href="http://hh.ru/employer-logo/517220.jpeg"/>
+                    <link rel="medium" href="http://hh.ru/employer-logo/517221.jpeg"/>
+                </logos>
+            </employer>
+            <update year="2011" month="10" day="14" hour="15" minute="23" second="39" gmt="+04:00"
+                    timestamp="1318591419">2011-10-14T15:23:39.063+04:00
+            </update>
+            <salary>
+                <notset/>
+            </salary>
+            <region xmlns="" id="1002">
+                <name>Минск</name>
+            </region>
+            <site>http://hh.ru</site>
+        </vacancy>
+        <vacancy id="4964595">
+            <link rel="self" type="application/xml" href="http://api.hh.ru/1/xml/vacancy/4964595/"/>
+            <link rel="alternate" type="text/html" href="http://hh.ru/vacancy/4964595"/>
+            <name>Senior/Lead Developer (Java/C++, Android, iOS)</name>
+            <employer id="745841">
+                <link rel="self" type="application/xml" href="http://api.hh.ru/1/xml/employer/745841/"/>
+                <link rel="alternate" type="text/html" href="http://hh.ru/employer/745841"/>
+                <name>AgileFusion</name>
+                <logos>
+                    <link rel="small" href="http://hh.ru/employer-logo/612815.png"/>
+                    <link rel="medium" href="http://hh.ru/employer-logo/612816.png"/>
+                </logos>
+            </employer>
+            <update year="2011" month="10" day="14" hour="00" minute="29" second="00" gmt="+04:00"
+                    timestamp="1318537740">2011-10-14T00:29:00.567+04:00
+            </update>
+            <salary>
+                <from>75000</from>
+                <to>120000</to>
+                <currency code="RUR">руб.</currency>
+            </salary>
+            <region xmlns="" id="2">
+                <name>Санкт-Петербург</name>
+            </region>
+            <site>http://hh.ru</site>
+            <address>
+                <lng>30.314512</lng>
+                <lat>59.804939</lat>
+                <city>Санкт-Петербург</city>
+                <street>Внуковская</street>
+                <building>2</building>
+            </address>
+        </vacancy>
+        <vacancy id="3305796">
+            <link rel="self" type="application/xml" href="http://api.hh.ru/1/xml/vacancy/3305796/"/>
+            <link rel="alternate" type="text/html" href="http://hh.ru/vacancy/3305796"/>
+            <name>Senior java developer</name>
+            <employer id="1455">
+                <link rel="self" type="application/xml" href="http://api.hh.ru/1/xml/employer/1455/"/>
+                <link rel="alternate" type="text/html" href="http://hh.ru/employer/1455"/>
+                <name>ru.workmap.HHSearcher</name>
+                <department code="hh-1455-TECH">
+                    <link type="text/html" href="http://hh.ru/employer/1455?dpt=hh-1455-TECH"/>
+                    <name>ru.workmap.HeadHunter::Технический департамент</name>
+                </department>
+                <logos>
+                    <link rel="small" href="http://hh.ru/employer-logo/289027.png"/>
+                    <link rel="medium" href="http://hh.ru/employer-logo/289169.png"/>
+                </logos>
+            </employer>
+            <update year="2011" month="10" day="13" hour="20" minute="15" second="58" gmt="+04:00"
+                    timestamp="1318522558">2011-10-13T20:15:58.308+04:00
+            </update>
+            <salary>
+                <from>130000</from>
+                <to>150000</to>
+                <currency code="RUR">руб.</currency>
+            </salary>
+            <region xmlns="" id="1">
+                <name>Москва</name>
+            </region>
+            <site>http://hh.ru</site>
+            <address>
+                <lng>37.628505</lng>
+                <lat>55.809343</lat>
+                <metro>
+                    <line id="6" color="#F60">
+                        <name>Калужско-Рижская</name>
+                        <station id="8" path="6/8" color="#F60">Алексеевская</station>
+                    </line>
+                </metro>
+                <city>Москва</city>
+                <street>Годовикова</street>
+                <building>д.9, стр. 10</building>
+            </address>
+        </vacancy>
+        <vacancy id="4963873">
+            <link rel="self" type="application/xml" href="http://api.hh.ru/1/xml/vacancy/4963873/"/>
+            <link rel="alternate" type="text/html" href="http://hh.ru/vacancy/4963873"/>
+            <name>Senior QA Automation Engineer</name>
+            <employer id="662769">
+                <link rel="self" type="application/xml" href="http://api.hh.ru/1/xml/employer/662769/"/>
+                <link rel="alternate" type="text/html" href="http://hh.ru/employer/662769"/>
+                <name>Wargaming.net / CООО Гейм Стрим</name>
+                <logos>
+                    <link rel="small" href="http://hh.ru/employer-logo/456155.jpeg"/>
+                    <link rel="medium" href="http://hh.ru/employer-logo/456156.jpeg"/>
+                </logos>
+            </employer>
+            <update year="2011" month="10" day="13" hour="17" minute="40" second="21" gmt="+04:00"
+                    timestamp="1318513221">2011-10-13T17:40:21.185+04:00
+            </update>
+            <salary>
+                <notset/>
+            </salary>
+            <region xmlns="" id="1002">
+                <name>Минск</name>
+            </region>
+            <site>http://hh.ru</site>
+        </vacancy>
+        <vacancy id="4548535">
+            <link rel="self" type="application/xml" href="http://api.hh.ru/1/xml/vacancy/4548535/"/>
+            <link rel="alternate" type="text/html" href="http://hh.ru/vacancy/4548535"/>
+            <name>PHP Developer</name>
+            <employer id="679086">
+                <link rel="self" type="application/xml" href="http://api.hh.ru/1/xml/employer/679086/"/>
+                <link rel="alternate" type="text/html" href="http://hh.ru/employer/679086"/>
+                <name>Personalinvest / ПерсоналИнвест</name>
+                <logos>
+                    <link rel="small" href="http://hh.ru/employer-logo/572624.jpeg"/>
+                    <link rel="medium" href="http://hh.ru/employer-logo/572625.jpeg"/>
+                </logos>
+            </employer>
+            <update year="2011" month="10" day="13" hour="17" minute="06" second="29" gmt="+04:00"
+                    timestamp="1318511189">2011-10-13T17:06:29.431+04:00
+            </update>
+            <salary>
+                <from>2000</from>
+                <currency code="USD">USD</currency>
+            </salary>
+            <region xmlns="" id="1002">
+                <name>Минск</name>
+            </region>
+            <site>http://hh.ru</site>
+        </vacancy>
+        <vacancy id="4835986">
+            <link rel="self" type="application/xml" href="http://api.hh.ru/1/xml/vacancy/4835986/"/>
+            <link rel="alternate" type="text/html" href="http://hh.ru/vacancy/4835986"/>
+            <name>Системный разработчик JAVA</name>
+            <employer id="867517">
+                <link rel="self" type="application/xml" href="http://api.hh.ru/1/xml/employer/867517/"/>
+                <link rel="alternate" type="text/html" href="http://hh.ru/employer/867517"/>
+                <name>Новаком Групп</name>
+                <logos>
+                    <link rel="small" href="http://hh.ru/employer-logo/602747.png"/>
+                    <link rel="medium" href="http://hh.ru/employer-logo/602748.png"/>
+                </logos>
+            </employer>
+            <update year="2011" month="10" day="13" hour="15" minute="08" second="19" gmt="+04:00"
+                    timestamp="1318504099">2011-10-13T15:08:19.204+04:00
+            </update>
+            <salary>
+                <to>2000</to>
+                <currency code="USD">USD</currency>
+            </salary>
+            <region xmlns="" id="1002">
+                <name>Минск</name>
+            </region>
+            <site>http://hh.ru</site>
+        </vacancy>
+        <vacancy id="4836049">
+            <link rel="self" type="application/xml" href="http://api.hh.ru/1/xml/vacancy/4836049/"/>
+            <link rel="alternate" type="text/html" href="http://hh.ru/vacancy/4836049"/>
+            <name>Java программист</name>
+            <employer id="867517">
+                <link rel="self" type="application/xml" href="http://api.hh.ru/1/xml/employer/867517/"/>
+                <link rel="alternate" type="text/html" href="http://hh.ru/employer/867517"/>
+                <name>Новаком Групп</name>
+                <logos>
+                    <link rel="small" href="http://hh.ru/employer-logo/602747.png"/>
+                    <link rel="medium" href="http://hh.ru/employer-logo/602748.png"/>
+                </logos>
+            </employer>
+            <update year="2011" month="10" day="13" hour="15" minute="08" second="00" gmt="+04:00"
+                    timestamp="1318504080">2011-10-13T15:08:00.265+04:00
+            </update>
+            <salary>
+                <to>1700</to>
+                <currency code="USD">USD</currency>
+            </salary>
+            <region xmlns="" id="1002">
+                <name>Минск</name>
+            </region>
+            <site>http://hh.ru</site>
+        </vacancy>
+        <vacancy id="4835914">
+            <link rel="self" type="application/xml" href="http://api.hh.ru/1/xml/vacancy/4835914/"/>
+            <link rel="alternate" type="text/html" href="http://hh.ru/vacancy/4835914"/>
+            <name>Java архитектор</name>
+            <employer id="867517">
+                <link rel="self" type="application/xml" href="http://api.hh.ru/1/xml/employer/867517/"/>
+                <link rel="alternate" type="text/html" href="http://hh.ru/employer/867517"/>
+                <name>Новаком Групп</name>
+                <logos>
+                    <link rel="small" href="http://hh.ru/employer-logo/602747.png"/>
+                    <link rel="medium" href="http://hh.ru/employer-logo/602748.png"/>
+                </logos>
+            </employer>
+            <update year="2011" month="10" day="13" hour="15" minute="07" second="51" gmt="+04:00"
+                    timestamp="1318504071">2011-10-13T15:07:51.400+04:00
+            </update>
+            <salary>
+                <to>2500</to>
+                <currency code="USD">USD</currency>
+            </salary>
+            <region xmlns="" id="1002">
+                <name>Минск</name>
+            </region>
+            <site>http://hh.ru</site>
+        </vacancy>
+        <vacancy id="4917448">
+            <link rel="self" type="application/xml" href="http://api.hh.ru/1/xml/vacancy/4917448/"/>
+            <link rel="alternate" type="text/html" href="http://hh.ru/vacancy/4917448"/>
+            <name>Java developer</name>
+            <employer id="867517">
+                <link rel="self" type="application/xml" href="http://api.hh.ru/1/xml/employer/867517/"/>
+                <link rel="alternate" type="text/html" href="http://hh.ru/employer/867517"/>
+                <name>Новаком Групп</name>
+                <logos>
+                    <link rel="small" href="http://hh.ru/employer-logo/602747.png"/>
+                    <link rel="medium" href="http://hh.ru/employer-logo/602748.png"/>
+                </logos>
+            </employer>
+            <update year="2011" month="10" day="13" hour="15" minute="07" second="38" gmt="+04:00"
+                    timestamp="1318504058">2011-10-13T15:07:38.031+04:00
+            </update>
+            <salary>
+                <notset/>
+            </salary>
+            <region xmlns="" id="1002">
+                <name>Минск</name>
+            </region>
+            <site>http://hh.ru</site>
+        </vacancy>
+        <vacancy id="4962465">
+            <link rel="self" type="application/xml" href="http://api.hh.ru/1/xml/vacancy/4962465/"/>
+            <link rel="alternate" type="text/html" href="http://hh.ru/vacancy/4962465"/>
+            <name>Java developer</name>
+            <employer id="763432">
+                <link rel="self" type="application/xml" href="http://api.hh.ru/1/xml/employer/763432/"/>
+                <link rel="alternate" type="text/html" href="http://hh.ru/employer/763432"/>
+                <name>Oxagile</name>
+                <logos>
+                    <link rel="small" href="http://hh.ru/employer-logo/597134.png"/>
+                    <link rel="medium" href="http://hh.ru/employer-logo/597135.png"/>
+                </logos>
+            </employer>
+            <update year="2011" month="10" day="13" hour="14" minute="56" second="44" gmt="+04:00"
+                    timestamp="1318503404">2011-10-13T14:56:44.569+04:00
+            </update>
+            <salary>
+                <notset/>
+            </salary>
+            <region xmlns="" id="1002">
+                <name>Минск</name>
+            </region>
+            <site>http://hh.ru</site>
+            <address>
+                <lng>27.542652</lng>
+                <lat>53.906453</lat>
+                <city>Минск</city>
+                <street>Мельникайте</street>
+                <building>4</building>
+            </address>
+        </vacancy>
+        <vacancy id="4962457">
+            <link rel="self" type="application/xml" href="http://api.hh.ru/1/xml/vacancy/4962457/"/>
+            <link rel="alternate" type="text/html" href="http://hh.ru/vacancy/4962457"/>
+            <name>.NET developer</name>
+            <employer id="763432">
+                <link rel="self" type="application/xml" href="http://api.hh.ru/1/xml/employer/763432/"/>
+                <link rel="alternate" type="text/html" href="http://hh.ru/employer/763432"/>
+                <name>Oxagile</name>
+                <logos>
+                    <link rel="small" href="http://hh.ru/employer-logo/597134.png"/>
+                    <link rel="medium" href="http://hh.ru/employer-logo/597135.png"/>
+                </logos>
+            </employer>
+            <update year="2011" month="10" day="13" hour="14" minute="56" second="12" gmt="+04:00"
+                    timestamp="1318503372">2011-10-13T14:56:12.531+04:00
+            </update>
+            <salary>
+                <notset/>
+            </salary>
+            <region xmlns="" id="1002">
+                <name>Минск</name>
+            </region>
+            <site>http://hh.ru</site>
+            <address>
+                <lng>27.542652</lng>
+                <lat>53.906453</lat>
+                <city>Минск</city>
+                <street>Мельникайте</street>
+                <building>4</building>
+            </address>
+        </vacancy>
+        <vacancy id="4591224">
+            <link rel="self" type="application/xml" href="http://api.hh.ru/1/xml/vacancy/4591224/"/>
+            <link rel="alternate" type="text/html" href="http://hh.ru/vacancy/4591224"/>
+            <name>Java программист</name>
+            <employer id="747391">
+                <link rel="self" type="application/xml" href="http://api.hh.ru/1/xml/employer/747391/"/>
+                <link rel="alternate" type="text/html" href="http://hh.ru/employer/747391"/>
+                <name>Logic Way</name>
+                <logos>
+                    <link rel="small" href="http://hh.ru/employer-logo/536297.png"/>
+                    <link rel="medium" href="http://hh.ru/employer-logo/536298.png"/>
+                </logos>
+            </employer>
+            <update year="2011" month="10" day="13" hour="14" minute="10" second="02" gmt="+04:00"
+                    timestamp="1318500602">2011-10-13T14:10:02.720+04:00
+            </update>
+            <salary>
+                <notset/>
+            </salary>
+            <region xmlns="" id="1002">
+                <name>Минск</name>
+            </region>
+            <site>http://hh.ru</site>
+        </vacancy>
+        <vacancy id="4961812">
+            <link rel="self" type="application/xml" href="http://api.hh.ru/1/xml/vacancy/4961812/"/>
+            <link rel="alternate" type="text/html" href="http://hh.ru/vacancy/4961812"/>
+            <name>Java Developer</name>
+            <employer id="829491">
+                <link rel="self" type="application/xml" href="http://api.hh.ru/1/xml/employer/829491/"/>
+                <link rel="alternate" type="text/html" href="http://hh.ru/employer/829491"/>
+                <name>Точные решения, ОДО</name>
+                <logos>
+                    <link rel="small" href="http://hh.ru/employer-logo/556772.jpeg"/>
+                    <link rel="medium" href="http://hh.ru/employer-logo/556773.jpeg"/>
+                </logos>
+            </employer>
+            <update year="2011" month="10" day="13" hour="13" minute="42" second="55" gmt="+04:00"
+                    timestamp="1318498975">2011-10-13T13:42:55.392+04:00
+            </update>
+            <salary>
+                <notset/>
+            </salary>
+            <region xmlns="" id="1002">
+                <name>Минск</name>
+            </region>
+            <site>http://hh.ru</site>
+        </vacancy>
+        <vacancy id="4961730">
+            <link rel="self" type="application/xml" href="http://api.hh.ru/1/xml/vacancy/4961730/"/>
+            <link rel="alternate" type="text/html" href="http://hh.ru/vacancy/4961730"/>
+            <name>Java script разработчик</name>
+            <employer id="632462">
+                <link rel="self" type="application/xml" href="http://api.hh.ru/1/xml/employer/632462/"/>
+                <link rel="alternate" type="text/html" href="http://hh.ru/employer/632462"/>
+                <name>EPAM Systems, Inc.</name>
+                <logos>
+                    <link rel="small" href="http://hh.ru/employer-logo/514994.png"/>
+                    <link rel="medium" href="http://hh.ru/employer-logo/514995.png"/>
+                </logos>
+            </employer>
+            <update year="2011" month="10" day="13" hour="13" minute="28" second="36" gmt="+04:00"
+                    timestamp="1318498116">2011-10-13T13:28:36.940+04:00
+            </update>
+            <salary>
+                <notset/>
+            </salary>
+            <region xmlns="" id="1002">
+                <name>Минск</name>
+            </region>
+            <site>http://hh.ru</site>
+        </vacancy>
+        <vacancy id="4091177">
+            <link rel="self" type="application/xml" href="http://api.hh.ru/1/xml/vacancy/4091177/"/>
+            <link rel="alternate" type="text/html" href="http://hh.ru/vacancy/4091177"/>
+            <name>Java Developer</name>
+            <employer id="589032">
+                <link rel="self" type="application/xml" href="http://api.hh.ru/1/xml/employer/589032/"/>
+                <link rel="alternate" type="text/html" href="http://hh.ru/employer/589032"/>
+                <name>EffectiveSoft</name>
+                <logos>
+                    <link rel="small" href="http://hh.ru/employer-logo/515042.png"/>
+                    <link rel="medium" href="http://hh.ru/employer-logo/515043.png"/>
+                </logos>
+            </employer>
+            <update year="2011" month="10" day="13" hour="13" minute="16" second="20" gmt="+04:00"
+                    timestamp="1318497380">2011-10-13T13:16:20.855+04:00
+            </update>
+            <salary>
+                <from>2000</from>
+                <currency code="USD">USD</currency>
+            </salary>
+            <region xmlns="" id="1002">
+                <name>Минск</name>
+            </region>
+            <site>http://hh.ru</site>
+            <address>
+                <lng>27.5849</lng>
+                <lat>53.918153</lat>
+                <city>Минск</city>
+                <street>Я.Коласа</street>
+                <building>3</building>
+            </address>
+        </vacancy>
+        <vacancy id="4961614">
+            <link rel="self" type="application/xml" href="http://api.hh.ru/1/xml/vacancy/4961614/"/>
+            <link rel="alternate" type="text/html" href="http://hh.ru/vacancy/4961614"/>
+            <name>Java Developer</name>
+            <employer id="718393">
+                <link rel="self" type="application/xml" href="http://api.hh.ru/1/xml/employer/718393/"/>
+                <link rel="alternate" type="text/html" href="http://hh.ru/employer/718393"/>
+                <name>Инновационная компания Promwad</name>
+                <logos>
+                    <link rel="small" href="http://hh.ru/employer-logo/497827.jpeg"/>
+                    <link rel="medium" href="http://hh.ru/employer-logo/497828.jpeg"/>
+                </logos>
+            </employer>
+            <update year="2011" month="10" day="13" hour="13" minute="15" second="00" gmt="+04:00"
+                    timestamp="1318497300">2011-10-13T13:15:00.777+04:00
+            </update>
+            <salary>
+                <notset/>
+            </salary>
+            <region xmlns="" id="1002">
+                <name>Минск</name>
+            </region>
+            <site>http://hh.ru</site>
+        </vacancy>
+        <vacancy id="4706699">
+            <link rel="self" type="application/xml" href="http://api.hh.ru/1/xml/vacancy/4706699/"/>
+            <link rel="alternate" type="text/html" href="http://hh.ru/vacancy/4706699"/>
+            <name>Java Developer</name>
+            <employer id="679086">
+                <link rel="self" type="application/xml" href="http://api.hh.ru/1/xml/employer/679086/"/>
+                <link rel="alternate" type="text/html" href="http://hh.ru/employer/679086"/>
+                <name>Personalinvest / ПерсоналИнвест</name>
+                <logos>
+                    <link rel="small" href="http://hh.ru/employer-logo/572624.jpeg"/>
+                    <link rel="medium" href="http://hh.ru/employer-logo/572625.jpeg"/>
+                </logos>
+            </employer>
+            <update year="2011" month="10" day="13" hour="12" minute="22" second="21" gmt="+04:00"
+                    timestamp="1318494141">2011-10-13T12:22:21.664+04:00
+            </update>
+            <salary>
+                <from>1500</from>
+                <currency code="USD">USD</currency>
+            </salary>
+            <region xmlns="" id="1002">
+                <name>Минск</name>
+            </region>
+            <site>http://hh.ru</site>
+        </vacancy>
+        <vacancy id="4518540">
+            <link rel="self" type="application/xml" href="http://api.hh.ru/1/xml/vacancy/4518540/"/>
+            <link rel="alternate" type="text/html" href="http://hh.ru/vacancy/4518540"/>
+            <name>Java developer (web программист)</name>
+            <employer id="221933">
+                <link rel="self" type="application/xml" href="http://api.hh.ru/1/xml/employer/221933/"/>
+                <link rel="alternate" type="text/html" href="http://hh.ru/employer/221933"/>
+                <name>Generation_P Consulting</name>
+                <logos>
+                    <link rel="small" href="http://hh.ru/employer-logo/352709.png"/>
+                    <link rel="medium" href="http://hh.ru/employer-logo/425566.png"/>
+                </logos>
+            </employer>
+            <update year="2011" month="10" day="12" hour="19" minute="08" second="05" gmt="+04:00"
+                    timestamp="1318432085">2011-10-12T19:08:05.723+04:00
+            </update>
+            <salary>
+                <notset/>
+            </salary>
+            <region xmlns="" id="1002">
+                <name>Минск</name>
+            </region>
+            <site>http://hh.ru</site>
+            <address>
+                <lng>27.5165407173336</lng>
+                <lat>53.9106442037594</lat>
+                <city>Минск</city>
+                <street>Скрыганова</street>
+                <building>6А</building>
+            </address>
+        </vacancy>
+    </vacancies>
+</result>

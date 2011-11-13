@@ -1,0 +1,161 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+    <meta content="Работа на карте, вакансии на карте">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>Работа на карте</title>
+    <script src="http://api-maps.yandex.ru/1.1/index.xml?key=AA4rnU4BAAAAe7NpVgIAtqf4KKBB1LupH041c7cZlHoKH-YAAAAAAAAAAAD688Dy35GTPUxy9dydUdPwSgTfcw=="
+            type="text/javascript"></script>
+    <script type="text/javascript"
+            src="dwr/interface/Remote.js"></script>
+    <script type="text/javascript"
+            src="dwr/engine.js"></script>
+    <script type="text/javascript"
+            src="dwr/interface/MyBean.js"></script>
+
+    <script type="text/javascript">
+        var map;
+        var textInput;
+        var msgDiv;
+        var firstText = "стилист";
+
+        function init() {
+            textInput = document.getElementById("textInput");
+            textInput.value = firstText;
+            msgDiv = document.getElementById("msg");
+            var mapDiv = document.getElementById("YMapsID");
+//            mapDiv.style.width = mapTD.offsetWidth;
+//            mapDiv.style.height = mapTD.offsetHeight;
+            initMap();
+//            MyBean.getAllKnownRegions(cb2);
+            MyBean.setText(firstText);
+//            MyBean.getVacanciesForMap(cb);
+            YMaps.Events.observe(map, [map.Events.BoundsChange], function () {
+                var ll = map.getCenter();
+                var spn = map.getBounds().getSpan();
+                MyBean.setMapCoords(ll.getX(), ll.getY(), spn.getX(), spn.getY());
+                searchVacancies();
+//                YMaps.jQuery("#YMapsLink").attr("href", "?t=" + typeConverter.typeToName(map.getType()) +
+//                        "&ll=" + map.getCenter().toString() + "&spn=" + map.getBounds().getSpan().toString(6));
+            });
+
+        }
+
+
+        function cb(hhResult) {
+            map.removeAllOverlays();
+            msgDiv.innerHTML = "Еще " + hhResult.otherVacancies + " вакансий без указания адреса";
+            var vacancyList = hhResult.coordinatesList;
+            for (i = 0,l = vacancyList.length; i < l; i++) {
+                var vacancy = vacancyList[i];
+                var placemark = new YMaps.Placemark(new YMaps.GeoPoint(vacancy.address.latitude, vacancy.address.longitude));
+                placemark.name = vacancy.name;
+                placemark.description = vacancy.description;
+                map.addOverlay(placemark);
+            }
+//            vacancyList = hhResult.streetList;
+//            var data = new Array();
+//            for (i = 0,l = vacancyList.length; i < l; i++) {
+//                var vacancy = vacancyList[i];
+//                data.push(vacancy.address.address);
+//            }
+//            if (data.length > 0){
+//                var geocoder = new MultiplyGeocoder(data);
+//                map.addOverlay(geocoder);
+//            }
+        }
+
+        function cb2(vacancyList) {
+            map.removeAllOverlays();
+            msgDiv.innerHTML = "";
+            for (i = 0,l = vacancyList.length; i < l; i++) {
+                var vacancy = vacancyList[i];
+                var placemark = new YMaps.Placemark(new YMaps.GeoPoint(vacancy.address.latitude, vacancy.address.longitude));
+                placemark.name = vacancy.name;
+                map.addOverlay(placemark);
+            }
+        }
+
+
+        function initMap() {
+
+            map = new YMaps.Map(YMaps.jQuery("#YMapsID")[0]);
+            map.setCenter(new YMaps.GeoPoint(37.64, 55.76), 10);
+            map.addControl(new YMaps.Zoom());
+            var ll = map.getCenter();
+            var spn = map.getBounds().getSpan();
+            MyBean.setMapCoords(ll.getX(), ll.getY(), spn.getX(), spn.getY());
+        }
+
+        function setText() {
+            MyBean.setText(textInput.value);
+            searchVacancies();
+        }
+
+        function searchVacancies() {
+            msgDiv.innerHTML = "Загружаем " + textInput.value + "...";
+            MyBean.getVacancies(cb, {errorHandler: errHandler});
+        }
+
+        function errHandler(msg, exc) {
+            alert("Error message is: " + msg + " - Error Details: "
+                    + dwr.util.toDescriptiveString(exc, 2));
+        }
+
+
+    </script>
+    <script type="text/javascript">
+
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-22295795-2']);
+        _gaq.push(['_trackPageview']);
+
+        (function() {
+            var ga = document.createElement('script');
+            ga.type = 'text/javascript';
+            ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(ga, s);
+        })();
+
+    </script>
+
+</head>
+<body onload="init()">
+<div id="inputDiv">
+    <table>
+        <tr>
+            <td>
+                Введите ключевое слово:
+                <input type="text" id="textInput">
+                <input type="button" onclick="setText()" value="Искать">
+            </td>
+            <td>
+                <div id="msg" align=""/>
+            </td>
+        </tr>
+    </table>
+
+
+</div>
+<div id="YMapsID" style="width: 800px;height: 600px;float: left;background-color: #7fffd4;"></div>
+<div id="advDiv" style="position: absolute; right: 10px; top: 10px;">
+    <script type="text/javascript"><!--
+    google_ad_client = "pub-9397637184929081";
+    /* 300x250, ������� 06.11.11 */
+    google_ad_slot = "8612624421";
+    google_ad_width = 300;
+    google_ad_height = 250;
+    //-->
+    </script>
+    <script type="text/javascript"
+            src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+    </script>
+
+</div>
+
+
+</body>
+</html>

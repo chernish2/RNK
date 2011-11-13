@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://hh.ru/api" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="result" type="api:resultType" xmlns:api="http://hh.ru/api"/>
+  <xs:complexType name="logosType">
+    <xs:sequence>
+      <xs:element type="api:linkType" name="link" maxOccurs="unbounded" minOccurs="0" xmlns:api="http://hh.ru/api"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="salaryType">
+    <xs:sequence>
+      <xs:element type="xs:string" name="notset" minOccurs="0"/>
+      <xs:element name="from" minOccurs="0">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="75000"/>
+            <xs:enumeration value="130000"/>
+            <xs:enumeration value="2000"/>
+            <xs:enumeration value="1500"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="to" minOccurs="0">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="120000"/>
+            <xs:enumeration value="150000"/>
+            <xs:enumeration value="2000"/>
+            <xs:enumeration value="1700"/>
+            <xs:enumeration value="2500"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element type="api:currencyType" name="currency" minOccurs="0" xmlns:api="http://hh.ru/api"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="currencyType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute type="xs:string" name="code" use="optional"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="updateType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute type="xs:string" name="year" use="optional"/>
+        <xs:attribute type="xs:string" name="month" use="optional"/>
+        <xs:attribute type="xs:string" name="day" use="optional"/>
+        <xs:attribute type="xs:string" name="hour" use="optional"/>
+        <xs:attribute type="xs:string" name="minute" use="optional"/>
+        <xs:attribute type="xs:string" name="second" use="optional"/>
+        <xs:attribute type="xs:string" name="gmt" use="optional"/>
+        <xs:attribute type="xs:string" name="timestamp" use="optional"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="departmentType">
+    <xs:sequence>
+      <xs:element type="api:linkType" name="link" xmlns:api="http://hh.ru/api"/>
+      <xs:element type="xs:string" name="name"/>
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="code"/>
+  </xs:complexType>
+  <xs:complexType name="addressType">
+    <xs:sequence>
+      <xs:element name="lng">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="27.5165407173336"/>
+            <xs:enumeration value="27.542652"/>
+            <xs:enumeration value="30.314512"/>
+            <xs:enumeration value="37.628505"/>
+            <xs:enumeration value="27.5849"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="lat">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="53.9106442037594"/>
+            <xs:enumeration value="53.906453"/>
+            <xs:enumeration value="59.804939"/>
+            <xs:enumeration value="55.809343"/>
+            <xs:enumeration value="53.918153"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element type="api:metroType" name="metro" minOccurs="0" xmlns:api="http://hh.ru/api"/>
+      <xs:element name="city">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="Минск"/>
+            <xs:enumeration value="Санкт-Петербург"/>
+            <xs:enumeration value="Москва"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="street">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="Скрыганова"/>
+            <xs:enumeration value="Мельникайте"/>
+            <xs:enumeration value="Внуковская"/>
+            <xs:enumeration value="Годовикова"/>
+            <xs:enumeration value="Я.Коласа"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+      <xs:element name="building">
+        <xs:simpleType>
+          <xs:restriction base="xs:string">
+            <xs:enumeration value="6А"/>
+            <xs:enumeration value="4"/>
+            <xs:enumeration value="2"/>
+            <xs:enumeration value="д.9, стр. 10"/>
+            <xs:enumeration value="3"/>
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="vacanciesType">
+    <xs:sequence>
+      <xs:element type="api:vacancyType" name="vacancy" maxOccurs="unbounded" minOccurs="0" xmlns:api="http://hh.ru/api"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="linkType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute type="xs:string" name="rel" use="optional"/>
+        <xs:attribute type="xs:string" name="type" use="optional"/>
+        <xs:attribute type="xs:string" name="href" use="optional"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="metroType">
+    <xs:sequence>
+      <xs:element type="api:lineType" name="line" xmlns:api="http://hh.ru/api"/>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="vacancyType">
+    <xs:sequence>
+      <xs:element type="api:linkType" name="link" maxOccurs="unbounded" minOccurs="0" xmlns:api="http://hh.ru/api"/>
+      <xs:element type="xs:string" name="name"/>
+      <xs:element type="api:employerType" name="employer" xmlns:api="http://hh.ru/api"/>
+      <xs:element type="api:updateType" name="update" xmlns:api="http://hh.ru/api"/>
+      <xs:element type="api:salaryType" name="salary" xmlns:api="http://hh.ru/api"/>
+      <xs:element ref="region"/>
+      <xs:element type="xs:string" name="site"/>
+      <xs:element type="api:addressType" name="address" minOccurs="0" xmlns:api="http://hh.ru/api"/>
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="id" use="optional"/>
+  </xs:complexType>
+  <xs:complexType name="employerType">
+    <xs:sequence>
+      <xs:element type="api:linkType" name="link" maxOccurs="unbounded" minOccurs="0" xmlns:api="http://hh.ru/api"/>
+      <xs:element type="xs:string" name="name"/>
+      <xs:element type="api:departmentType" name="department" minOccurs="0" xmlns:api="http://hh.ru/api"/>
+      <xs:element type="api:logosType" name="logos" xmlns:api="http://hh.ru/api"/>
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="id" use="optional"/>
+  </xs:complexType>
+  <xs:complexType name="lineType">
+    <xs:sequence>
+      <xs:element type="xs:string" name="name"/>
+      <xs:element type="api:stationType" name="station" xmlns:api="http://hh.ru/api"/>
+    </xs:sequence>
+    <xs:attribute type="xs:string" name="id"/>
+    <xs:attribute type="xs:string" name="color"/>
+  </xs:complexType>
+  <xs:complexType name="stationType">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute type="xs:string" name="id"/>
+        <xs:attribute type="xs:string" name="path"/>
+        <xs:attribute type="xs:string" name="color"/>
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="resultType">
+    <xs:sequence>
+      <xs:element type="xs:string" name="found"/>
+      <xs:element type="api:vacanciesType" name="vacancies" xmlns:api="http://hh.ru/api"/>
+    </xs:sequence>
+  </xs:complexType>
+</xs:schema>
