@@ -60,6 +60,6 @@ public class RamCache implements ICache {
     }
 
     private long getFreeMemory() {
-        return Runtime.getRuntime().totalMemory() / 1024 - Runtime.getRuntime().freeMemory() / 1024;
+        return Runtime.getRuntime().freeMemory() / 1024;
     }
 }
