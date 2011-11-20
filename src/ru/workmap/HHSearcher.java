@@ -28,7 +28,7 @@ import java.util.concurrent.*;
 public class HHSearcher {
     private String text;
 //    private double x1, y1, x2, y2;
-    private double x0, y0, boundX, boundY;
+    private double x0, y0, boundX, boundY; // latitude - x; longitude - y
     private static final Logger log = Logger.getLogger(HHSearcher.class);
     private static RamCache cacheManager = new RamCache();
     private static final int ITEMS_PER_PAGE = 500;
@@ -54,17 +54,43 @@ public class HHSearcher {
 
     public List<Vacancy> getVacancies() throws JAXBException, IOException, SAXException, ExecutionException, InterruptedException {
         String key = "http://api.hh.ru/1/xml/vacancy/search?text=" + URLEncoder.encode(text, "UTF-8") + "&items=" + ITEMS_PER_PAGE;
+        List<Vacancy> unfilteredVacancies;
         if (cacheManager.contains(key)) {
-            return cacheManager.get(key);
+            unfilteredVacancies = cacheManager.get(key);
+        }else{
+            unfilteredVacancies = new ArrayList<Vacancy>();
+            for (Vacancy vacancy : fetchVacancies(key)) {
+                if (vacancy.getAddress().hasCoordinates()) {
+                    unfilteredVacancies.add(vacancy);
+                }
+            }
+            cacheManager.put(key, unfilteredVacancies);
         }
-        List<Vacancy> vacancies = new ArrayList<Vacancy>();
-        for (Vacancy vacancy : fetchVacancies(key)) {
-            if (vacancy.getAddress().hasCoordinates()) {
-                vacancies.add(vacancy);
+        return filterVacancies(unfilteredVacancies);
+    }
+
+    private List<Vacancy> filterVacancies(List<Vacancy> unfilteredVacancies){
+        List<Vacancy> filteredVacancies = new ArrayList<Vacancy>();
+        for(Vacancy vacancy: unfilteredVacancies){
+            if(isVacancyOnMap(vacancy)){
+                filteredVacancies.add(vacancy);
             }
         }
-        cacheManager.put(key, vacancies);
-        return vacancies;
+        log.debug(filteredVacancies.size() + " vacancies filtered out of " + unfilteredVacancies.size());
+        return filteredVacancies;
+    }
+
+    private boolean isVacancyOnMap(Vacancy vacancy){
+        double latitude = vacancy.getAddress().getLatitude();
+        double longitude = vacancy.getAddress().getLongitude();
+        if(latitude > x0 - boundX / 2 &&
+                latitude < x0 + boundX / 2 &&
+                    longitude < y0 + boundY / 2 &&
+                        longitude > y0 - boundY / 2){
+            return true;
+        }else{
+            return false;
+        }
     }
 
     private List<Integer> getNeighboringRegions() {

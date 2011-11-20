@@ -22,6 +22,11 @@ public class Vacancy {
     private Employer employer = new Employer();
     private Salary salary = new Salary();
 
+    public static final int TYPE_EXACT = 0;
+    public static final int TYPE_OVERALL = 1;
+
+    private int type;
+
     public int getId() {
         return id;
     }
@@ -99,4 +104,11 @@ public class Vacancy {
         return resStr;
     }
 
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
 }
