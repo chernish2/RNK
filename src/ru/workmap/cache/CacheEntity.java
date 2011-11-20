@@ -14,16 +14,16 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public class CacheEntity {
-    private HHResult hhResult;
+    private List<Vacancy> vacancies;
     private Date creationDate;
 
-    public CacheEntity(HHResult hhResult) {
-        this.hhResult = hhResult;
+    public CacheEntity(List<Vacancy> vacancies) {
+        this.vacancies = vacancies;
         creationDate = new Date();
     }
 
-    public HHResult getHhResult() {
-        return hhResult;
+    public List<Vacancy> getVacancies() {
+        return vacancies;
     }
 
     public Date getCreationDate() {

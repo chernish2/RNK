@@ -26,7 +26,7 @@ public class MyBean {
     private static final String KEY = "Searcher";
     private static final Logger log = Logger.getLogger(MyBean.class);
 
-    public HHResult getVacancies() throws JAXBException, IOException, SAXException, ExecutionException, InterruptedException {
+    public List<Vacancy> getVacancies() throws JAXBException, IOException, SAXException, ExecutionException, InterruptedException {
         return getSearcher().getVacancies();
     }
 
@@ -51,7 +51,7 @@ public class MyBean {
         }else{
             searcher = (HHSearcher)o;
         }
-        log.debug("Searcher=" + searcher + "; Session=" + session);
+//        log.debug("Searcher=" + searcher + "; Session=" + session);
         return searcher;
     }
 }

@@ -1,0 +1,53 @@
+@import url(http://fonts.googleapis.com/css?family=PT+Sans+Narrow:700&subset=latin,cyrillic);
+
+body {
+    background: #123;
+    color: #333;
+    font-size: 11px;
+    height: auto;
+    padding-bottom: 20px;
+}
+
+.header {
+
+
+}
+
+.header h1 {
+    height: 88px;
+    font-size: 44px;
+    line-height: 88px;
+    margin: 0;
+    color: #fff;
+    font-family: "PT Sans Narrow", sans-serif;
+    text-shadow: 0 10px 10px #456;
+}
+
+.content {
+    background: #fff;
+    border-radius: 11px;
+    box-shadow: 0 2px 4px #999;
+}
+
+
+.searchForm {
+  margin:  11px;
+}
+
+.searchForm fieldset {
+  margin:  0px;
+}
+
+
+.map {
+    height: 600px;
+    margin-bottom: 11px;
+
+}
+
+.footer{
+    color:#fff;
+    text-align: center;
+}
+
+

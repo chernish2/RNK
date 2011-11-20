@@ -49,9 +49,10 @@
         }
 
 
-        function cb(vacancyList) {
+        function cb(hhResult) {
             map.removeAllOverlays();
-            msgDiv.innerHTML = "";
+            msgDiv.innerHTML = "Еще " + hhResult.otherVacancies + " вакансий без указания адреса";
+            var vacancyList = hhResult.coordinatesList;
             for (i = 0,l = vacancyList.length; i < l; i++) {
                 var vacancy = vacancyList[i];
                 var placemark = new YMaps.Placemark(new YMaps.GeoPoint(vacancy.address.latitude, vacancy.address.longitude));
@@ -100,13 +101,8 @@
 
         function searchVacancies() {
             msgDiv.innerHTML = "Загружаем " + textInput.value + "...";
-            clearMap();
-            MyBean.getVacancies(cb, {errorHandler: errHandler});
-//            hh.vacancies.search(firstText, cb);
-        }
-
-        function clearMap() {
-            map.removeAllOverlays();
+//            MyBean.getVacancies(cb, {errorHandler: errHandler});
+              hh.vacancies.search(firstText, cb);
         }
 
         function errHandler(msg, exc) {
@@ -135,46 +131,38 @@
 
 </head>
 <body onload="init()">
-<div class="container_12 header">
-    <div class="grid_12">
-        <h1>работа на карте - альфа версия</h1>
-    </div>
-</div>
-<div class="clear"></div>
-<div class="container_12 content">
-    <div class="grid_12">
-        <table align="center" border="2">
-            <tr align="center">
-                <td align="right">
-                    Введите ключевое слово:
-                    <input type="text" id="textInput">
-                    <input type="button" onclick="setText()" value="Искать">
-                </td>
-                <td align="left">
-                    <div id="msg" align=""/>
-                </td>
-            </tr>
-        </table>
+<div id="inputDiv">
+    <table>
+        <tr>
+            <td>
+                Введите ключевое слово:
+                <input type="text" id="textInput">
+                <input type="button" onclick="setText()" value="Искать">
+            </td>
+            <td>
+                <div id="msg" align=""/>
+            </td>
+        </tr>
+    </table>
 
-        <!--<form class="searchForm" action="#" method="post" onsubmit="return false;">-->
-        <!--<fieldset>-->
-        <!--<label for="textInput">текст для поиска вакансий:</label>-->
-        <!--<input type="text" name="textInput" id="textInput"/>-->
-        <!--<input type="button" onclick="setText()" value="искать"/>-->
-        <!--</fieldset>-->
-        <!--</form>-->
-        <!--<span id="msg" style="display: inline-block;"></span>-->
-    </div>
-    <div class="clear"></div>
 
-    <div class="grid_12">
-        <div id="YMapsID" class="map"></div>
-    </div>
 </div>
-<div class="container_12 footer">
-    <div class="grid_12">
-        <a href="mailto:4257998@gmail.com">написать письмо</a>
-    </div>
+<div id="YMapsID" style="width: 800px;height: 600px;float: left;background-color: #7fffd4;"></div>
+<div id="advDiv" style="position: absolute; right: 10px; top: 10px;">
+    <script type="text/javascript"><!--
+    google_ad_client = "pub-9397637184929081";
+    /* 300x250, ������� 06.11.11 */
+    google_ad_slot = "8612624421";
+    google_ad_width = 300;
+    google_ad_height = 250;
+    //-->
+    </script>
+    <script type="text/javascript"
+            src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+    </script>
+
 </div>
+
+
 </body>
 </html>

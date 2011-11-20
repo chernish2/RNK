@@ -4,7 +4,7 @@ import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.xml.sax.SAXException;
 import ru.workmap.HeadHunter.*;
-import ru.workmap.cache.CacheManager;
+import ru.workmap.cache.RamCache;
 import ru.workmap.util.PageFetcher;
 
 import javax.xml.bind.JAXBContext;
@@ -30,11 +30,12 @@ public class HHSearcher {
 //    private double x1, y1, x2, y2;
     private double x0, y0, boundX, boundY;
     private static final Logger log = Logger.getLogger(HHSearcher.class);
-    private CacheManager cacheManager = new CacheManager();
+    private static RamCache cacheManager = new RamCache();
     private static final int ITEMS_PER_PAGE = 500;
     private static Regions regions;
 
     public HHSearcher() {
+/*
         log.setLevel(Level.ERROR);
         JAXBContext context = null;
         try {
@@ -48,34 +49,22 @@ public class HHSearcher {
         } catch (MalformedURLException e) {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
+*/
     }
 
-    public HHResult getVacancies() throws JAXBException, IOException, SAXException, ExecutionException, InterruptedException {
+    public List<Vacancy> getVacancies() throws JAXBException, IOException, SAXException, ExecutionException, InterruptedException {
         String key = "http://api.hh.ru/1/xml/vacancy/search?text=" + URLEncoder.encode(text, "UTF-8") + "&items=" + ITEMS_PER_PAGE;
-        List<Integer> neighboringRegions = getNeighboringRegions();
-        if (neighboringRegions.size() == 0){
-            return new HHResult();
-        }
-        for (Integer integer : neighboringRegions) {
-            key += "&region=" + integer;
-        }
-        if (cacheManager.containsKey(key)) {
+        if (cacheManager.contains(key)) {
             return cacheManager.get(key);
         }
-
-        HHResult hhResult = new HHResult();
-
+        List<Vacancy> vacancies = new ArrayList<Vacancy>();
         for (Vacancy vacancy : fetchVacancies(key)) {
             if (vacancy.getAddress().hasCoordinates()) {
-                hhResult.getCoordinatesList().add(vacancy);
-            }else if(vacancy.getAddress().hasCityAddress()){
-                hhResult.getStreetList().add(vacancy);
-            }else{
-                hhResult.otherVacancies++;
+                vacancies.add(vacancy);
             }
         }
-        cacheManager.put(key, hhResult);
-        return hhResult;
+        cacheManager.put(key, vacancies);
+        return vacancies;
     }
 
     private List<Integer> getNeighboringRegions() {
@@ -102,7 +91,11 @@ public class HHSearcher {
         Result result = new PageFetcher<Result>(urlStr, new Result()).call();
         List<Vacancy> vacancyList = result.vacancies.vacancyList;
         if (result.found > ITEMS_PER_PAGE) {
-            int pages = result.found / ITEMS_PER_PAGE;   //Fix!
+            int pages = result.found / ITEMS_PER_PAGE;
+            int reminder = result.found % ITEMS_PER_PAGE;
+            if (reminder > 0){
+                pages++;
+            }
             ExecutorService pool = Executors.newFixedThreadPool(pages);
             Set<Future<Result>> futureSet = new HashSet<Future<Result>>();
             for (int i = 0; i < pages; i++) {
