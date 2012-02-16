@@ -6,7 +6,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 import java.util.Deque;
 import java.util.LinkedList;
-import java.util.Queue;
 
 /**
  * Created by IntelliJ IDEA.
@@ -73,9 +72,9 @@ public class Region {
     }
 
     private boolean nameIsValid(String name) {
-        if (!name.contains("Другие страны") &&
-                !name.contains("Московская область - ") &&
-                    !name.contains(" округ")){
+        if (!name.contains("Р”СЂСѓРіРёРµ СЃС‚СЂР°РЅС‹") &&
+                !name.contains("РњРѕСЃРєРѕРІСЃРєР°СЏ РѕР±Р»Р°СЃС‚СЊ - ") &&
+                !name.contains(" РѕРєСЂСѓРі")){
             return true;
         }
         return false;

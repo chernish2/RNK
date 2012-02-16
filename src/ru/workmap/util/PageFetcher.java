@@ -13,7 +13,6 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.transform.sax.SAXSource;
 import java.io.IOException;
-import java.lang.reflect.ParameterizedType;
 import java.net.URL;
 import java.util.concurrent.Callable;
 

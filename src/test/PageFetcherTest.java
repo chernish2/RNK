@@ -6,7 +6,6 @@ import org.xml.sax.SAXException;
 import ru.workmap.HeadHunter.Result;
 import ru.workmap.util.PageFetcher;
 
-import javax.xml.bind.JAXBException;
 import java.io.IOException;
 
 /**

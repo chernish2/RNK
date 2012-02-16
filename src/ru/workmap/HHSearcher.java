@@ -1,21 +1,22 @@
 package ru.workmap;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.xml.sax.SAXException;
-import ru.workmap.HeadHunter.*;
-import ru.workmap.cache.RamCache;
+import ru.workmap.HeadHunter.Regions;
+import ru.workmap.HeadHunter.Result;
+import ru.workmap.HeadHunter.Vacancy;
+import ru.workmap.cache.DBCache;
+import ru.workmap.cache.ICache;
 import ru.workmap.util.PageFetcher;
+import ru.workmap.util.Statistics;
 
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Unmarshaller;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.net.URLEncoder;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.*;
 
 /**
@@ -27,32 +28,22 @@ import java.util.concurrent.*;
  */
 public class HHSearcher {
     private String text;
-//    private double x1, y1, x2, y2;
-    private double x0, y0, boundX, boundY; // latitude - x; longitude - y
+    private double x0, y0, boundX, boundY; // latitude широта - y; longitude долгота - x
     private static final Logger log = Logger.getLogger(HHSearcher.class);
-    private static RamCache cacheManager = new RamCache();
+//    private static ICache cacheManager = new RamCache();
+    private static ICache cacheManager = DBCache.getInstance();
     private static final int ITEMS_PER_PAGE = 500;
+    private static final int MAX_VACANCIES = 100;
+    private static final int MAX_VACANCIE_DESCRIPTIONS_IN_ONE_PLACE = 7;
+    private static final double RADIUS = 10; // percents!
     private static Regions regions;
 
     public HHSearcher() {
-/*
-        log.setLevel(Level.ERROR);
-        JAXBContext context = null;
-        try {
-            context = JAXBContext.newInstance(Regions.class);
-            Unmarshaller unmarshaller = context.createUnmarshaller();
-            regions = (Regions) unmarshaller.unmarshal(new URL("http://workmap.ru/allregions.xml"));
-//            regions = (Regions) unmarshaller.unmarshal(new URL("http://localhost:8080/allregions.xml"));
-//            log.debug("Unmarshalled " + regions.regions.size() + " regions");
-        } catch (JAXBException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        } catch (MalformedURLException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-        }
-*/
+        Statistics.hit();
     }
 
     public List<Vacancy> getVacancies() throws JAXBException, IOException, SAXException, ExecutionException, InterruptedException {
+        Statistics.search();
         String key = "http://api.hh.ru/1/xml/vacancy/search?text=" + URLEncoder.encode(text, "UTF-8") + "&items=" + ITEMS_PER_PAGE;
         List<Vacancy> unfilteredVacancies;
         if (cacheManager.contains(key)) {
@@ -66,7 +57,7 @@ public class HHSearcher {
             }
             cacheManager.put(key, unfilteredVacancies);
         }
-        return filterVacancies(unfilteredVacancies);
+        return compressVacancies(filterVacancies(unfilteredVacancies));
     }
 
     private List<Vacancy> filterVacancies(List<Vacancy> unfilteredVacancies){
@@ -83,34 +74,76 @@ public class HHSearcher {
     private boolean isVacancyOnMap(Vacancy vacancy){
         double latitude = vacancy.getAddress().getLatitude();
         double longitude = vacancy.getAddress().getLongitude();
-        if(latitude > x0 - boundX / 2 &&
-                latitude < x0 + boundX / 2 &&
-                    longitude < y0 + boundY / 2 &&
-                        longitude > y0 - boundY / 2){
+        if(longitude > x0 - boundX / 2 &&
+                longitude < x0 + boundX / 2 &&
+                    latitude < y0 + boundY / 2 &&
+                        latitude > y0 - boundY / 2){
             return true;
         }else{
             return false;
         }
     }
-
-    private List<Integer> getNeighboringRegions() {
-        double radius = boundX;
-        List<Integer> regIdList = new ArrayList<Integer>();
-        for (Region region: regions.regions){
-            double x = region.getLatitude();
-            double y = region.getLongitude();
-            if (x >= x0 - boundX / 2 && x <= x0 + boundX /2 && y >= y0 - boundY / 2 && y <= y0 + boundY / 2){
-                regIdList.add(region.getId());
+    
+    private List<Vacancy> compressVacancies(List<Vacancy> vacancies){
+        List<Vacancy> compressedVacancies = new ArrayList<Vacancy>();
+        List<Vacancy> skipList = new ArrayList<Vacancy>();
+        for(Vacancy vacancy:vacancies){
+            if(!skipList.contains(vacancy)){
+                List<Vacancy> neighboringVacancies = getNeighboringVacancies(vacancy, vacancies);
+                neighboringVacancies.removeAll(skipList);
+                if(!neighboringVacancies.isEmpty()){
+                    skipList.addAll(neighboringVacancies);
+                    neighboringVacancies.add(vacancy);
+                    Vacancy compositeVacancy = makeCompositeVacancy(neighboringVacancies);
+                    compressedVacancies.add(compositeVacancy);
+                }else{
+                    compressedVacancies.add(vacancy);
+                }
             }
-//            if( ((x - x0) * (x - x0) + (y - y0) * (y - y0)) <= radius * radius ){
-//                regIdList.add(region.getId());
-//            }
         }
-        log.debug("Found " + regIdList.size() + " regions:\n" + regIdList);
-        if (regIdList.size() > 99){
-            regIdList = regIdList.subList(0, 98);
+        log.debug(compressedVacancies.size() + " vacancies after compression");
+        return compressedVacancies;
+    }
+
+    private Vacancy makeCompositeVacancy(List<Vacancy> vacancies) {
+        double latitude = 0, longitude = 0;
+        StringBuilder urlBuilder = new StringBuilder();
+        Vacancy compositeVacancy = new Vacancy();
+        for(Vacancy v: vacancies){
+            latitude += v.getAddress().getLatitude();
+            longitude += v.getAddress().getLongitude();
+            urlBuilder.append(v.getNameUrl());
         }
-        return regIdList;
+        latitude = latitude / vacancies.size();
+        longitude = longitude / vacancies.size();
+        compositeVacancy.getAddress().setLatitude(latitude);
+        compositeVacancy.getAddress().setLongitude(longitude);
+        if(vacancies.size() <= MAX_VACANCIE_DESCRIPTIONS_IN_ONE_PLACE){
+            compositeVacancy.setName (urlBuilder.toString());
+        }else{
+            compositeVacancy.setName(makeVacanciesString(vacancies.size()));
+            compositeVacancy.getAddress().setStreet("увеличьте масштаб,<br>чтобы увидеть<br>подробнее");
+        }
+        return compositeVacancy;
+    }
+
+    private List<Vacancy> getNeighboringVacancies(Vacancy vacancy, List<Vacancy> allVacancies){
+        double r = boundY / 100 * RADIUS;
+        List<Vacancy> neighboringVacancies = new ArrayList<Vacancy>();
+        for(Vacancy v: allVacancies){
+            if(v != vacancy){
+                if(getDistance(v, vacancy) <= r){
+                    neighboringVacancies.add(v);
+                }
+            }
+        }
+        return neighboringVacancies;
+    }
+
+    private double getDistance(Vacancy v1, Vacancy v2){
+        double a = v1.getAddress().getLatitude() - v2.getAddress().getLatitude();
+        double b = v1.getAddress().getLongitude() - v2.getAddress().getLongitude();
+        return Math.sqrt(a * a + b * b);
     }
 
     private List<Vacancy> fetchVacancies(String urlStr) throws JAXBException, IOException, SAXException, ExecutionException, InterruptedException {
@@ -144,16 +177,29 @@ public class HHSearcher {
         y0 = centerY;
         this.boundX = boundX;
         this.boundY = boundY;
-//        x1 = centerX - boundX / 2;
-//        y1 = centerY + boundY / 2;
-//        x2 = centerX + boundX / 2;
-//        y2 = centerY - boundY / 2;
         log.debug("setMapCoords: " + centerX + ":" + centerY + ", " + boundX + ":" + boundY);
     }
 
     public void setText(String text) {
         this.text = text;
         log.debug("setText:" + text);
+    }
+
+    private String makeVacanciesString(int size){
+        String vacanciesString = "нонсенс";
+        if(size > 4 && size < 21){
+            vacanciesString = size + " вакансий";
+        }else {
+            int lastDigit = size % 10;
+            if(lastDigit == 1){
+                vacanciesString = size + " вакансия";
+            }else if(lastDigit < 5 && lastDigit > 0){
+                vacanciesString = size + " вакансии";
+            }else{
+                vacanciesString = size + " вакансий";
+            }
+        }
+        return vacanciesString;
     }
 
 }

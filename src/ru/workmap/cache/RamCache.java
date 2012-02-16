@@ -59,6 +59,16 @@ public class RamCache implements ICache {
         return new CacheStat();
     }
 
+    @Override
+    public void clear() {
+        cache.clear();
+    }
+
+    @Override
+    public void update() {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     private long getFreeMemory() {
         return Runtime.getRuntime().freeMemory() / 1024;
     }

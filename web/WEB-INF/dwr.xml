@@ -6,7 +6,7 @@
       <param name="class" value="java.util.Date"/>
     </create>
       <create creator="new" javascript="MyBean">
-          <param name="class" value="bean.MyBean"/>
+          <param name="class" value="ru.workmap.bean.MyBean"/>
       </create>
       <convert converter="bean" match="ru.workmap.HeadHunter.Vacancy"/>
       <convert converter="bean" match="ru.workmap.HeadHunter.Address"/>
@@ -14,8 +14,8 @@
       <convert converter="bean" match="ru.workmap.HeadHunter.Employer"/>
       <convert converter="bean" match="ru.workmap.HeadHunter.Salary"/>
       <convert converter="bean" match="ru.workmap.HeadHunter.HHResult"/>
-      <convert match="java.lang.Exception" converter="exception"/>
-      <convert match="java.lang.StackTraceElement" converter="bean"/>
+      <convert converter="exception" match="java.lang.Exception"/>
+      <convert converter="bean" match="java.lang.StackTraceElement"/>
 
   </allow>
 </dwr>

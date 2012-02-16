@@ -2,7 +2,6 @@ package ru.workmap;
 
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
-
 import org.xml.sax.helpers.XMLFilterImpl;
 
 public class NamespaceFilter extends XMLFilterImpl {

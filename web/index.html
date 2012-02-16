@@ -10,6 +10,7 @@
     <link rel="stylesheet" href="css/960.css"/>
     <link rel="stylesheet" href="css/site.css"/>
 
+    <script type="text/javascript" src="http://j.maxmind.com/app/geoip.js"></script>
     <script type="text/javascript" src="http://api.hh.ru/1/js/api.js"></script>
     <script src="http://api-maps.yandex.ru/1.1/index.xml?key=AA4rnU4BAAAAe7NpVgIAtqf4KKBB1LupH041c7cZlHoKH-YAAAAAAAAAAAD688Dy35GTPUxy9dydUdPwSgTfcw=="
             type="text/javascript"></script>
@@ -28,22 +29,20 @@
 
         function init() {
             textInput = document.getElementById("textInput");
-            textInput.value = firstText;
+            if (getCookie("searchString") != null){
+                textInput.value = getCookie("searchString");
+            }else{
+                textInput.value = firstText;
+            }
             msgDiv = document.getElementById("msg");
             var mapDiv = document.getElementById("YMapsID");
-//            mapDiv.style.width = mapTD.offsetWidth;
-//            mapDiv.style.height = mapTD.offsetHeight;
             initMap();
-//            MyBean.getAllKnownRegions(cb2);
             MyBean.setText(firstText);
-//            MyBean.getVacanciesForMap(cb);
             YMaps.Events.observe(map, [map.Events.BoundsChange], function () {
                 var ll = map.getCenter();
                 var spn = map.getBounds().getSpan();
                 MyBean.setMapCoords(ll.getX(), ll.getY(), spn.getX(), spn.getY());
                 searchVacancies();
-//                YMaps.jQuery("#YMapsLink").attr("href", "?t=" + typeConverter.typeToName(map.getType()) +
-//                        "&ll=" + map.getCenter().toString() + "&spn=" + map.getBounds().getSpan().toString(6));
             });
 
         }
@@ -54,40 +53,18 @@
             msgDiv.innerHTML = "";
             for (i = 0,l = vacancyList.length; i < l; i++) {
                 var vacancy = vacancyList[i];
-                var placemark = new YMaps.Placemark(new YMaps.GeoPoint(vacancy.address.latitude, vacancy.address.longitude));
-                placemark.name = vacancy.name;
+                var placemark = new YMaps.Placemark(new YMaps.GeoPoint(vacancy.address.longitude, vacancy.address.latitude));
+                placemark.name = vacancy.nameUrl;
                 placemark.description = vacancy.description;
                 map.addOverlay(placemark);
             }
-//            vacancyList = hhResult.streetList;
-//            var data = new Array();
-//            for (i = 0,l = vacancyList.length; i < l; i++) {
-//                var vacancy = vacancyList[i];
-//                data.push(vacancy.address.address);
-//            }
-//            if (data.length > 0){
-//                var geocoder = new MultiplyGeocoder(data);
-//                map.addOverlay(geocoder);
-//            }
         }
-
-        function cb2(vacancyList) {
-            map.removeAllOverlays();
-            msgDiv.innerHTML = "";
-            for (i = 0,l = vacancyList.length; i < l; i++) {
-                var vacancy = vacancyList[i];
-                var placemark = new YMaps.Placemark(new YMaps.GeoPoint(vacancy.address.latitude, vacancy.address.longitude));
-                placemark.name = vacancy.name;
-                map.addOverlay(placemark);
-            }
-        }
-
 
         function initMap() {
-
             map = new YMaps.Map(YMaps.jQuery("#YMapsID")[0]);
-            map.setCenter(new YMaps.GeoPoint(37.64, 55.76), 10);
+            map.setCenter(new YMaps.GeoPoint(geoip_longitude(), geoip_latitude()), 10);
             map.addControl(new YMaps.Zoom());
+            map.enableScrollZoom();
             var ll = map.getCenter();
             var spn = map.getBounds().getSpan();
             MyBean.setMapCoords(ll.getX(), ll.getY(), spn.getX(), spn.getY());
@@ -102,7 +79,6 @@
             msgDiv.innerHTML = "Загружаем " + textInput.value + "...";
             clearMap();
             MyBean.getVacancies(cb, {errorHandler: errHandler});
-//            hh.vacancies.search(firstText, cb);
         }
 
         function clearMap() {
@@ -112,6 +88,29 @@
         function errHandler(msg, exc) {
             alert("Error message is: " + msg + " - Error Details: "
                     + dwr.util.toDescriptiveString(exc, 2));
+        }
+
+        function setCookie(name, value) {
+            document.cookie = name + "=" + escape(value) + "; path=/";
+        }
+
+        function getCookie (name) {
+            var dc = document.cookie;
+            var cname = name + "=";
+            if (dc.length > 0) {
+                begin = dc.indexOf(cname);
+                if (begin != -1) {
+                    begin += cname.length;
+                    end = dc.indexOf(";", begin);
+                    if (end == -1) end = dc.length;
+                    return unescape(dc.substring(begin, end));
+                }
+            }
+            return null;
+        }
+
+        function onClose(){
+            setCookie("searchString", textInput.value);
         }
 
 
@@ -134,7 +133,7 @@
     </script>
 
 </head>
-<body onload="init()">
+<body onload="init()" onunload="onClose()">
 <div class="container_12 header">
     <div class="grid_12">
         <h1>работа на карте - альфа версия</h1>

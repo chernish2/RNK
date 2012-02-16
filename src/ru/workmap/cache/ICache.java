@@ -16,8 +16,11 @@ public interface ICache {
 
     public List<Vacancy> get(String request);
 
-
     public void put(String request, List<Vacancy> vacancies);
 
     public CacheStat getStat();
+
+    public void clear();
+
+    public void update();
 }

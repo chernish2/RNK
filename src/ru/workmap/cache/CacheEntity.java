@@ -1,6 +1,5 @@
 package ru.workmap.cache;
 
-import ru.workmap.HeadHunter.HHResult;
 import ru.workmap.HeadHunter.Vacancy;
 
 import java.util.Date;

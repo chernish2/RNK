@@ -1,11 +1,10 @@
-package bean;
+package ru.workmap.bean;
 
 import org.apache.log4j.Logger;
 import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
 import org.xml.sax.SAXException;
 import ru.workmap.HHSearcher;
-import ru.workmap.HeadHunter.HHResult;
 import ru.workmap.HeadHunter.Vacancy;
 
 import javax.servlet.http.HttpServletRequest;
