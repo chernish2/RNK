@@ -18,9 +18,10 @@ import java.io.Serializable;
 
 @Table(name = "vacancy", schema = "", catalog = "workmap")
 @Entity
-public class Vacancy implements Serializable{
+public class Vacancy implements Serializable {
 
     private int id;
+    private int xmlId;
     private String name = "";
     private Region region = new Region();
     private Address address = new Address();
@@ -33,15 +34,24 @@ public class Vacancy implements Serializable{
     private int type;
 
     @Id
-    @Column(name = "vacancy_id", unique = true)
-//    @GeneratedValue(strategy = GenerationType.TABLE)
+    @Column(name = "vacancy_id")
+    @GeneratedValue
     public int getId() {
         return id;
     }
 
-    @XmlAttribute()
     public void setId(int id) {
         this.id = id;
+    }
+
+    @Column(name = "vacancy_xmlid")
+    public int getXmlId() {
+        return xmlId;
+    }
+
+    @XmlAttribute(name = "id")
+    public void setXmlId(int xmlId) {
+        this.xmlId = xmlId;
     }
 
     @javax.persistence.Column(name = "vacancy_name")
@@ -98,13 +108,13 @@ public class Vacancy implements Serializable{
 
     @Override
     public String toString() {
-        return "id=" + id + "\nname=" + name + "\nregion" + region + "\naddress=" + address;
+        return "id=" + xmlId + "\nname=" + name + "\nregion" + region + "\naddress=" + address;
     }
 
     @Transient
     public String getVacancyUrl() {
-        if (id != 0) {
-            return "<br><a href=\"http://hh.ru/vacancy/" + id + "\" target=\"_blank\">Вакансия целиком</a>";
+        if (xmlId != 0) {
+            return "<br><a href=\"http://hh.ru/vacancy/" + xmlId + "\" target=\"_blank\">Вакансия целиком</a>";
         } else {
             return "";
         }
@@ -112,10 +122,10 @@ public class Vacancy implements Serializable{
 
     @Transient
     public String getNameUrl() {
-        if (id == 0) {
+        if (xmlId == 0) {
             return name;
         } else {
-            return "<br><a href=\"http://hh.ru/vacancy/" + id + "\" target=\"_blank\">" + name + "</a>";
+            return "<br><a href=\"http://hh.ru/vacancy/" + xmlId + "\" target=\"_blank\">" + name + "</a>";
         }
     }
 
@@ -161,12 +171,16 @@ public class Vacancy implements Serializable{
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Vacancy that = (Vacancy) o;
+        Vacancy vacancy = (Vacancy) o;
 
-//        if (vacancyAddressId != that.vacancyAddressId) return false;
-        if (id != that.id) return false;
-//        if (vacancySalaryId != that.vacancySalaryId) return false;
-        if (name != null ? !name.equals(that.name) : that.name != null) return false;
+        if (id != vacancy.id) return false;
+        if (type != vacancy.type) return false;
+        if (xmlId != vacancy.xmlId) return false;
+        if (address != null ? !address.equals(vacancy.address) : vacancy.address != null) return false;
+        if (employer != null ? !employer.equals(vacancy.employer) : vacancy.employer != null) return false;
+        if (name != null ? !name.equals(vacancy.name) : vacancy.name != null) return false;
+        if (region != null ? !region.equals(vacancy.region) : vacancy.region != null) return false;
+        if (salary != null ? !salary.equals(vacancy.salary) : vacancy.salary != null) return false;
 
         return true;
     }
@@ -174,10 +188,13 @@ public class Vacancy implements Serializable{
     @Override
     public int hashCode() {
         int result = id;
+        result = 31 * result + xmlId;
         result = 31 * result + (name != null ? name.hashCode() : 0);
-//        result = 31 * result + vacancyAddressId;
-//        result = 31 * result + vacancySalaryId;
+        result = 31 * result + (region != null ? region.hashCode() : 0);
+        result = 31 * result + (address != null ? address.hashCode() : 0);
+        result = 31 * result + (employer != null ? employer.hashCode() : 0);
+        result = 31 * result + (salary != null ? salary.hashCode() : 0);
+        result = 31 * result + type;
         return result;
     }
-
 }

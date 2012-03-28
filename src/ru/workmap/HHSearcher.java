@@ -1,22 +1,18 @@
 package ru.workmap;
 
 import org.apache.log4j.Logger;
-import org.xml.sax.SAXException;
-import ru.workmap.HeadHunter.Regions;
 import ru.workmap.HeadHunter.Result;
 import ru.workmap.HeadHunter.Vacancy;
 import ru.workmap.cache.DBCache;
 import ru.workmap.cache.ICache;
 import ru.workmap.util.PageFetcher;
+import ru.workmap.util.Settings;
 import ru.workmap.util.Statistics;
 
-import javax.xml.bind.JAXBException;
-import java.io.IOException;
+import java.io.Serializable;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.*;
 
 /**
@@ -26,44 +22,53 @@ import java.util.concurrent.*;
  * Time: 19:37
  * To change this template use File | Settings | File Templates.
  */
-public class HHSearcher {
+public class HHSearcher implements Serializable{
     private String text;
     private double x0, y0, boundX, boundY; // latitude широта - y; longitude долгота - x
     private static final Logger log = Logger.getLogger(HHSearcher.class);
-//    private static ICache cacheManager = new RamCache();
+//        private static ICache cacheManager = new RamCache();
     private static ICache cacheManager = DBCache.getInstance();
+//    private static ICache cacheManager = new NullCache();
     private static final int ITEMS_PER_PAGE = 500;
-    private static final int MAX_VACANCIES = 100;
+    //    private static final int MAX_VACANCIES = 100;
     private static final int MAX_VACANCIE_DESCRIPTIONS_IN_ONE_PLACE = 7;
     private static final double RADIUS = 10; // percents!
-    private static Regions regions;
+    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(Settings.getProperty(Settings.LOCALIZATION_BUNDLE));
+//    private static Regions regions;
 
     public HHSearcher() {
         Statistics.hit();
+        log.debug("Constructing new Searcher: " + this);
     }
 
-    public List<Vacancy> getVacancies() throws JAXBException, IOException, SAXException, ExecutionException, InterruptedException {
+    public static List<Vacancy> getVacancyList(String urlStr) {
+        List<Vacancy> vacancyList = new ArrayList<Vacancy>();
+        for (Vacancy vacancy : fetchVacancies(urlStr)) {
+            if (vacancy.getAddress().hasCoordinates()) {
+                vacancyList.add(vacancy);
+            }
+        }
+        return vacancyList;
+    }
+
+    public List<Vacancy> getVacancies() throws UnsupportedEncodingException {
         Statistics.search();
-        String key = "http://api.hh.ru/1/xml/vacancy/search?text=" + URLEncoder.encode(text, "UTF-8") + "&items=" + ITEMS_PER_PAGE;
+        String key = "http://api.hh.ru/1/xml/vacancy/search?vacancyNameField=true&text=" + URLEncoder.encode(text, "UTF-8") + "&items=" + ITEMS_PER_PAGE;
         List<Vacancy> unfilteredVacancies;
         if (cacheManager.contains(key)) {
             unfilteredVacancies = cacheManager.get(key);
-        }else{
-            unfilteredVacancies = new ArrayList<Vacancy>();
-            for (Vacancy vacancy : fetchVacancies(key)) {
-                if (vacancy.getAddress().hasCoordinates()) {
-                    unfilteredVacancies.add(vacancy);
-                }
-            }
+        } else {
+            unfilteredVacancies = getVacancyList(key);
             cacheManager.put(key, unfilteredVacancies);
         }
+        log.debug(unfilteredVacancies.size() + " unfiltered vacancies");
         return compressVacancies(filterVacancies(unfilteredVacancies));
     }
 
-    private List<Vacancy> filterVacancies(List<Vacancy> unfilteredVacancies){
+    private List<Vacancy> filterVacancies(List<Vacancy> unfilteredVacancies) {
         List<Vacancy> filteredVacancies = new ArrayList<Vacancy>();
-        for(Vacancy vacancy: unfilteredVacancies){
-            if(isVacancyOnMap(vacancy)){
+        for (Vacancy vacancy : unfilteredVacancies) {
+            if (isVacancyOnMap(vacancy)) {
                 filteredVacancies.add(vacancy);
             }
         }
@@ -71,32 +76,32 @@ public class HHSearcher {
         return filteredVacancies;
     }
 
-    private boolean isVacancyOnMap(Vacancy vacancy){
+    private boolean isVacancyOnMap(Vacancy vacancy) {
         double latitude = vacancy.getAddress().getLatitude();
         double longitude = vacancy.getAddress().getLongitude();
-        if(longitude > x0 - boundX / 2 &&
+        if (longitude > x0 - boundX / 2 &&
                 longitude < x0 + boundX / 2 &&
-                    latitude < y0 + boundY / 2 &&
-                        latitude > y0 - boundY / 2){
+                latitude < y0 + boundY / 2 &&
+                latitude > y0 - boundY / 2) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
-    
-    private List<Vacancy> compressVacancies(List<Vacancy> vacancies){
+
+    private List<Vacancy> compressVacancies(List<Vacancy> vacancies) {
         List<Vacancy> compressedVacancies = new ArrayList<Vacancy>();
         List<Vacancy> skipList = new ArrayList<Vacancy>();
-        for(Vacancy vacancy:vacancies){
-            if(!skipList.contains(vacancy)){
+        for (Vacancy vacancy : vacancies) {
+            if (!skipList.contains(vacancy)) {
                 List<Vacancy> neighboringVacancies = getNeighboringVacancies(vacancy, vacancies);
                 neighboringVacancies.removeAll(skipList);
-                if(!neighboringVacancies.isEmpty()){
+                if (!neighboringVacancies.isEmpty()) {
                     skipList.addAll(neighboringVacancies);
                     neighboringVacancies.add(vacancy);
                     Vacancy compositeVacancy = makeCompositeVacancy(neighboringVacancies);
                     compressedVacancies.add(compositeVacancy);
-                }else{
+                } else {
                     compressedVacancies.add(vacancy);
                 }
             }
@@ -109,7 +114,7 @@ public class HHSearcher {
         double latitude = 0, longitude = 0;
         StringBuilder urlBuilder = new StringBuilder();
         Vacancy compositeVacancy = new Vacancy();
-        for(Vacancy v: vacancies){
+        for (Vacancy v : vacancies) {
             latitude += v.getAddress().getLatitude();
             longitude += v.getAddress().getLongitude();
             urlBuilder.append(v.getNameUrl());
@@ -118,21 +123,21 @@ public class HHSearcher {
         longitude = longitude / vacancies.size();
         compositeVacancy.getAddress().setLatitude(latitude);
         compositeVacancy.getAddress().setLongitude(longitude);
-        if(vacancies.size() <= MAX_VACANCIE_DESCRIPTIONS_IN_ONE_PLACE){
-            compositeVacancy.setName (urlBuilder.toString());
-        }else{
+        if (vacancies.size() <= MAX_VACANCIE_DESCRIPTIONS_IN_ONE_PLACE) {
+            compositeVacancy.setName(urlBuilder.toString());
+        } else {
             compositeVacancy.setName(makeVacanciesString(vacancies.size()));
-            compositeVacancy.getAddress().setStreet("увеличьте масштаб,<br>чтобы увидеть<br>подробнее");
+            compositeVacancy.getAddress().setStreet(RESOURCE_BUNDLE.getString("descr"));
         }
         return compositeVacancy;
     }
 
-    private List<Vacancy> getNeighboringVacancies(Vacancy vacancy, List<Vacancy> allVacancies){
+    private List<Vacancy> getNeighboringVacancies(Vacancy vacancy, List<Vacancy> allVacancies) {
         double r = boundY / 100 * RADIUS;
         List<Vacancy> neighboringVacancies = new ArrayList<Vacancy>();
-        for(Vacancy v: allVacancies){
-            if(v != vacancy){
-                if(getDistance(v, vacancy) <= r){
+        for (Vacancy v : allVacancies) {
+            if (v != vacancy) {
+                if (getDistance(v, vacancy) <= r) {
                     neighboringVacancies.add(v);
                 }
             }
@@ -140,32 +145,38 @@ public class HHSearcher {
         return neighboringVacancies;
     }
 
-    private double getDistance(Vacancy v1, Vacancy v2){
+    private double getDistance(Vacancy v1, Vacancy v2) {
         double a = v1.getAddress().getLatitude() - v2.getAddress().getLatitude();
         double b = v1.getAddress().getLongitude() - v2.getAddress().getLongitude();
         return Math.sqrt(a * a + b * b);
     }
 
-    private List<Vacancy> fetchVacancies(String urlStr) throws JAXBException, IOException, SAXException, ExecutionException, InterruptedException {
+    private static List<Vacancy> fetchVacancies(String urlStr) {
         Result result = new PageFetcher<Result>(urlStr, new Result()).call();
         List<Vacancy> vacancyList = result.vacancies.vacancyList;
         if (result.found > ITEMS_PER_PAGE) {
             int pages = result.found / ITEMS_PER_PAGE;
-            int reminder = result.found % ITEMS_PER_PAGE;
-            if (reminder > 0){
-                pages++;
-            }
-            ExecutorService pool = Executors.newFixedThreadPool(pages);
+            int maxThreadPools = Settings.getPropertyAsInt(Settings.MAX_THREAD_POOL_NUMBER);
+            int threadNumber = pages > maxThreadPools ? maxThreadPools : pages;
+            ExecutorService pool = Executors.newFixedThreadPool(threadNumber);
             Set<Future<Result>> futureSet = new HashSet<Future<Result>>();
-            for (int i = 0; i < pages; i++) {
+            for (int i = 1; i < pages + 1; i++) {
                 String pageUrlStr = urlStr + "&page=" + i;
                 Callable<Result> callable = new PageFetcher(pageUrlStr, new Result());
                 Future<Result> future = pool.submit(callable);
                 futureSet.add(future);
             }
             for (Future<Result> future : futureSet) {
-                result = future.get();
-                vacancyList.addAll(result.vacancies.vacancyList);
+                try {
+                    result = future.get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                } catch (ExecutionException e) {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                }
+                if (result != null) {
+                    vacancyList.addAll(result.vacancies.vacancyList);
+                }
             }
         }
         log.debug("got " + vacancyList.size() + " vacancies totally from " + urlStr);
@@ -177,29 +188,29 @@ public class HHSearcher {
         y0 = centerY;
         this.boundX = boundX;
         this.boundY = boundY;
-        log.debug("setMapCoords: " + centerX + ":" + centerY + ", " + boundX + ":" + boundY);
+        log.debug("setMapCoords: " + centerX + ":" + centerY + ", " + boundX + ":" + boundY + " for class=" + this);
     }
 
     public void setText(String text) {
         this.text = text;
-        log.debug("setText:" + text);
+        log.debug("setText:" + text + " for class=" + this);
     }
 
-    private String makeVacanciesString(int size){
-        String vacanciesString = "нонсенс";
-        if(size > 4 && size < 21){
-            vacanciesString = size + " вакансий";
-        }else {
+    private String makeVacanciesString(int size) {
+        StringBuilder vacanciesString = new StringBuilder(size + " ");
+        if (size > 4 && size < 21) {
+            vacanciesString.append(RESOURCE_BUNDLE.getString("vacancies2"));
+        } else {
             int lastDigit = size % 10;
-            if(lastDigit == 1){
-                vacanciesString = size + " вакансия";
-            }else if(lastDigit < 5 && lastDigit > 0){
-                vacanciesString = size + " вакансии";
-            }else{
-                vacanciesString = size + " вакансий";
+            if (lastDigit == 1) {
+                vacanciesString.append(RESOURCE_BUNDLE.getString("vacancy"));
+            } else if (lastDigit < 5 && lastDigit > 0) {
+                vacanciesString.append(RESOURCE_BUNDLE.getString("vacancies1"));
+            } else {
+                vacanciesString.append(RESOURCE_BUNDLE.getString("vacancies2"));
             }
         }
-        return vacanciesString;
+        return vacanciesString.toString();
     }
 
 }

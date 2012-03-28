@@ -2,9 +2,8 @@ package ru.workmap.util;
 
 import org.apache.log4j.Logger;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Properties;
 
 /**
@@ -15,30 +14,31 @@ import java.util.Properties;
  * To change this template use File | Settings | File Templates.
  */
 public class Settings {
-//    private static Settings instance;
     private static Properties properties;
-    public static final String DB_USERNAME = "db_username";
-    public static final String DB_PASSWORD = "db_password";
-    public static final String SERVER_URL = "server_url";
     public static final String CACHE_UPDATE_TIME = "cache_update_time"; //in hours
+    public static final String MAX_THREAD_POOL_NUMBER = "max_thread_pool_number";
+    public static final String LOCALIZATION_BUNDLE = "bundle";
     private static final Logger log = Logger.getLogger(Settings.class);
 
     static {
         properties = new Properties();
+        InputStream in = Thread.currentThread().getContextClassLoader().getResourceAsStream("workmap.properties");
         try {
-            properties.load(new FileInputStream("..\\workmap.properties"));
+            properties.load(in);
+            in.close();
         } catch (IOException e) {
-            try{
-            log.error(new File(".").getCanonicalPath() + "   ;  " + new File("..").getCanonicalPath());
-            } catch (IOException e1) {
-                e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-            }
-
-            log.error("Error load properties", e);
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
         }
+
     }
 
-    public static String getProperty(String key){
+    public static String getProperty(String key) {
         return properties.getProperty(key);
     }
+
+    public static int getPropertyAsInt(String key){
+        return Integer.parseInt(getProperty(key));
+    }
+
+
 }

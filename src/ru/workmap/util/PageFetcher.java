@@ -29,19 +29,35 @@ public class PageFetcher<T extends IHH> implements Callable<T> {
     private Logger logger = Logger.getLogger(PageFetcher.class);
     private IHH t;
 
-    public PageFetcher(String urlStr, IHH t) throws JAXBException, IOException, SAXException {
+    public PageFetcher(String urlStr, IHH t) {
         this.urlStr = urlStr;
         this.t = t;
     }
 
     @Override
-    public T call() throws JAXBException, IOException, SAXException {
-//        logger.debug("Fetching page " + urlStr);
-        SAXSource source = createSource(urlStr);
-        JAXBContext context = JAXBContext.newInstance(t.getType());
-        unmarshaller = context.createUnmarshaller();
-        T result = (T) unmarshaller.unmarshal(source);
-//        logger.debug("Fetching finished for " + urlStr);
+    public T call() {
+        logger.debug("Fetching page " + urlStr);
+        T result = null;
+        int count = 0;
+        while(result == null && count < 2){
+            try {
+                SAXSource source = createSource(urlStr);
+                JAXBContext context = JAXBContext.newInstance(t.getType());
+                unmarshaller = context.createUnmarshaller();
+                result = (T) unmarshaller.unmarshal(source);
+            } catch (Exception e) {
+                count++;
+                try {
+                    Thread.sleep(5000);
+                    logger.debug("connection error, retrying " + urlStr);
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                }
+            }
+        }
+        if(result == null){
+            logger.error("error fetching " + urlStr);
+        }
         return result;
     }
 

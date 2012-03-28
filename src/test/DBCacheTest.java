@@ -1,9 +1,11 @@
 package test;
 
+import org.directwebremoting.util.Logger;
 import org.junit.Test;
 import ru.workmap.HeadHunter.Address;
 import ru.workmap.HeadHunter.Salary;
 import ru.workmap.HeadHunter.Vacancy;
+import ru.workmap.cache.CacheStat;
 import ru.workmap.cache.DBCache;
 import ru.workmap.cache.QueryEntity;
 
@@ -19,18 +21,19 @@ import static org.junit.Assert.assertTrue;
 
 
 /**
- * Created by IntelliJ IDEA.
- * User: chernish2
- * Date: 06.02.12
- * Time: 10:40
- * To change this template use File | Settings | File Templates.
- */
+* Created by IntelliJ IDEA.
+* User: chernish2
+* Date: 06.02.12
+* Time: 10:40
+* To change this template use File | Settings | File Templates.
+*/
 public class DBCacheTest {
     private EntityManager entityManager;
     private DBCache cache = DBCache.getInstance();
     String s1 = "Все подряд";
     String s2 = "Все в порядке";
     private int vacancyId;
+    private static final Logger log = Logger.getLogger(DBCacheTest.class);
 
     public DBCacheTest() {
         EntityManagerFactory factory = Persistence.createEntityManagerFactory("persistenceUnit");
@@ -91,6 +94,14 @@ public class DBCacheTest {
         }
         entityManager.getTransaction().commit();
     }
+
+    @Test
+    public void getStatTest(){
+        CacheStat stat = cache.getStat();
+        System.out.println(stat.toString());
+    }
+
+
 
     private List<Vacancy> makeVacancyList() {
         List<Vacancy> vacancyList = new ArrayList<Vacancy>();

@@ -1,21 +1,21 @@
-
+<!DOCTYPE dwr PUBLIC
+        "-//GetAhead Limited//DTD Direct Web Remoting 3.0//EN"
+        "http://getahead.org/dwr/dwr30.dtd">
 
 <dwr>
-  <allow>
-    <create creator="new" javascript="JDate">
-      <param name="class" value="java.util.Date"/>
-    </create>
-      <create creator="new" javascript="MyBean">
-          <param name="class" value="ru.workmap.bean.MyBean"/>
-      </create>
-      <convert converter="bean" match="ru.workmap.HeadHunter.Vacancy"/>
-      <convert converter="bean" match="ru.workmap.HeadHunter.Address"/>
-      <convert converter="bean" match="ru.workmap.HeadHunter.Region"/>
-      <convert converter="bean" match="ru.workmap.HeadHunter.Employer"/>
-      <convert converter="bean" match="ru.workmap.HeadHunter.Salary"/>
-      <convert converter="bean" match="ru.workmap.HeadHunter.HHResult"/>
-      <convert converter="exception" match="java.lang.Exception"/>
-      <convert converter="bean" match="java.lang.StackTraceElement"/>
-
-  </allow>
+    <allow>
+        <create creator="new" javascript="JDate">
+            <param name="class" value="java.util.Date"/>
+        </create>
+        <create creator="new" javascript="MyBean">
+            <param name="class" value="ru.workmap.bean.MyBean"/>
+        </create>
+        <convert converter="bean" match="ru.workmap.HeadHunter.Vacancy"/>
+        <convert converter="bean" match="ru.workmap.HeadHunter.Address"/>
+        <convert converter="bean" match="ru.workmap.HeadHunter.Region"/>
+        <convert converter="bean" match="ru.workmap.HeadHunter.Employer"/>
+        <convert converter="bean" match="ru.workmap.HeadHunter.Salary"/>
+        <convert converter="exception" match="java.lang.Exception"/>
+        <convert converter="bean" match="java.lang.StackTraceElement"/>
+    </allow>
 </dwr>

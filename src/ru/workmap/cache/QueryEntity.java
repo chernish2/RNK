@@ -16,16 +16,19 @@ import java.util.List;
 @javax.persistence.Table(name = "query_table", schema = "", catalog = "workmap")
 @Entity(name = "ru.workmap.cache.QueryEntity")
 @NamedQueries({
-        @NamedQuery(name = "getQueryEntityByQueryStr", query = "SELECT q FROM ru.workmap.cache.QueryEntity q WHERE q.queryStr = :queryStr"),
+        @NamedQuery(name = "getQueryEntityByQueryStr", query = "FROM ru.workmap.cache.QueryEntity q WHERE q.queryStr = :queryStr"),
         @NamedQuery(name = "getQueryEntityCountByStr", query = "SELECT COUNT(*) FROM ru.workmap.cache.QueryEntity q WHERE q.queryStr = :queryStr"),
-        @NamedQuery(name = "getQueryEntityByDate", query = "SELECT q FROM ru.workmap.cache.QueryEntity q WHERE q.queryLastUpdated < :date")
+        @NamedQuery(name = "getQueryEntityByDate", query = "SELECT q FROM ru.workmap.cache.QueryEntity q WHERE q.queryLastUpdated < :date"),
+        @NamedQuery(name = "getStat", query = "SELECT q.queryStr, q.queryCount FROM ru.workmap.cache.QueryEntity q")
 })
-public class QueryEntity implements Serializable{
+public class QueryEntity implements Serializable {
     private int queryId;
     private List<QueryResultEntity> resultEntity = new ArrayList<QueryResultEntity>();
+    private String queryStr;
 
     @javax.persistence.Column(name = "query_id")
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     public int getQueryId() {
         return queryId;
     }
@@ -34,7 +37,7 @@ public class QueryEntity implements Serializable{
         this.queryId = queryId;
     }
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL}/*, orphanRemoval = true*/)
+    @OneToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
     @JoinColumn(name = "query_id")
     public List<QueryResultEntity> getResultEntity() {
         return resultEntity;
@@ -43,8 +46,6 @@ public class QueryEntity implements Serializable{
     public void setResultEntity(List<QueryResultEntity> resultEntity) {
         this.resultEntity = resultEntity;
     }
-
-    private String queryStr;
 
     @javax.persistence.Column(name = "query_str")
     @Basic

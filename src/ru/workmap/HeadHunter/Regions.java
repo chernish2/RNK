@@ -1,6 +1,5 @@
 package ru.workmap.HeadHunter;
 
-import org.xml.sax.SAXException;
 import ru.workmap.util.PageFetcher;
 import ru.workmap.yandex.YMaps;
 
@@ -10,7 +9,6 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import java.io.File;
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -78,7 +76,6 @@ public class Regions extends IHH{
             for (Region region:actualRegions){
                 String urlStr = "http://geocode-maps.yandex.ru/1.x/?format=xml&geocode=" + URLEncoder.encode(region.toString(), "UTF-8") + "&key=" + key;
                 YMaps yMaps = null;
-                try {
                     yMaps = new PageFetcher<YMaps>(urlStr, new YMaps()).call();
                     region.setLongitude(yMaps.getLongitude());
                     region.setLatitude(yMaps.getLatitude());
@@ -86,20 +83,6 @@ public class Regions extends IHH{
                     i++;
                     System.out.println("Processed " + i + " out of " + l);
 
-                } catch (JAXBException e) {
-                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                } catch (IOException e) {
-                    try {
-                        System.out.println("Got exception 500, waiting...");
-                        Thread.sleep(1000 * 30);
-
-                    } catch (InterruptedException e1) {
-                        e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                    }
-
-                } catch (SAXException e) {
-                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
-                }
             }
         }
     }

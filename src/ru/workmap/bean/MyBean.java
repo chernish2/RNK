@@ -3,16 +3,13 @@ package ru.workmap.bean;
 import org.apache.log4j.Logger;
 import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
-import org.xml.sax.SAXException;
 import ru.workmap.HHSearcher;
 import ru.workmap.HeadHunter.Vacancy;
 
-import javax.servlet.http.HttpServletRequest;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
-import javax.xml.bind.JAXBException;
-import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Created by IntelliJ IDEA.
@@ -24,33 +21,68 @@ import java.util.concurrent.ExecutionException;
 public class MyBean {
     private static final String KEY = "Searcher";
     private static final Logger log = Logger.getLogger(MyBean.class);
+    private static final Object monitor = new Object();
 
-    public List<Vacancy> getVacancies() throws JAXBException, IOException, SAXException, ExecutionException, InterruptedException {
-        return getSearcher().getVacancies();
+    public MyBean() {
     }
 
-    public void setMapCoords(double centerX, double centerY, double boundX, double boundY) {
-        getSearcher().setMapCoords(centerX, centerY, boundX, boundY);
-    }
-
-    public void setText(String text) {
-        getSearcher().setText(text);
-    }
-
-
-    private HHSearcher getSearcher(){
-        WebContext context = WebContextFactory.get();
-        HttpServletRequest request = context.getHttpServletRequest();
-        HttpSession session = request.getSession(true);
-        Object o = session.getAttribute(KEY);
-        HHSearcher searcher;
-        if (o == null){
-            searcher = new HHSearcher();
-            session.setAttribute(KEY, searcher);
-        }else{
-            searcher = (HHSearcher)o;
+    public List<Vacancy> getVacancies(ServletContext context) {
+        List<Vacancy> vacancyList = Collections.EMPTY_LIST;
+        try {
+            vacancyList = getSearcher(context).getVacancies();
+        } catch (Exception e) {
+            log.error(e);
         }
-//        log.debug("Searcher=" + searcher + "; Session=" + session);
-        return searcher;
+        return vacancyList;
     }
+
+    public void setMapCoords(double centerX, double centerY, double boundX, double boundY, ServletContext context) {
+        getSearcher(context).setMapCoords(centerX, centerY, boundX, boundY);
+    }
+
+    public void setText(String text, ServletContext context) {
+        getSearcher(context).setText(text.toLowerCase());
+    }
+
+
+    private synchronized HHSearcher getSearcher() {
+        synchronized (monitor) {
+            log.debug("Entering getSearcher(), " + this);
+            WebContext context = WebContextFactory.get();
+            HttpSession session = context.getSession(true);
+            Object o = session.getAttribute(KEY);
+            HHSearcher searcher;
+            if (o == null) {
+//            log.debug("creating HHSearcher");
+                searcher = new HHSearcher();
+//            log.debug("created " + searcher);
+                session.setAttribute(KEY, searcher);
+            } else {
+                searcher = (HHSearcher) o;
+            }
+            log.debug("Finishing getSearcher(), Searcher " + searcher + " for Session " + session + " from MyBean " + this);
+            return searcher;
+        }
+    }
+
+    private HHSearcher getSearcher(ServletContext context) {
+        synchronized (monitor) {
+            log.debug("Entering getSearcher(), " + this);
+            Object o = context.getAttribute(KEY);
+            HHSearcher searcher;
+            if (o == null) {
+//            log.debug("creating HHSearcher");
+                searcher = new HHSearcher();
+//            log.debug("created " + searcher);
+                context.setAttribute(KEY, searcher);
+            } else {
+                searcher = (HHSearcher) o;
+            }
+            log.debug("Finishing getSearcher(), Searcher " + searcher + " for Context " + context + " from MyBean " + this);
+            return searcher;
+
+        }
+    }
+
+
 }

@@ -1,12 +1,16 @@
 package ru.workmap.cache;
 
-
-
 import org.apache.log4j.Logger;
+import ru.workmap.HHSearcher;
 import ru.workmap.HeadHunter.Vacancy;
 import ru.workmap.util.Settings;
 
-import javax.persistence.*;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
+import javax.persistence.Query;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,78 +24,114 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public class DBCache implements ICache {
-//    @PersistenceContext(name = "persistenceUnit")
-    private static EntityManager entityManager;
     private static DBCache instance = new DBCache();
     private static final Logger log = Logger.getLogger(DBCache.class);
-    private static final long cacheExpireMins = 1;
-    private static final long cacheExpirePeriod = cacheExpireMins * 60 * 1000;
+    private static final EntityManagerFactory factory = Persistence.createEntityManagerFactory("persistenceUnit");
+    private static long cacheExpirePeriod;
 
-    static {
-        EntityManagerFactory factory = Persistence.createEntityManagerFactory("persistenceUnit");
-        entityManager = factory.createEntityManager();
+    private DBCache() {
+        cacheExpirePeriod = Settings.getPropertyAsInt(Settings.CACHE_UPDATE_TIME) * 60 * 1000;
     }
 
-//    private DBCache(){
-//        EntityManagerFactory factory = Persistence.createEntityManagerFactory("persistenceUnit");
-//        entityManager = factory.createEntityManager();
-//        factory.close();
-//    }
-
-    public static DBCache getInstance(){
+    public static DBCache getInstance() {
         return instance;
     }
 
-
     @Override
     public boolean contains(String request) {
+        EntityManager entityManager = factory.createEntityManager();
+        entityManager.getTransaction().begin();
         Query query = entityManager.createNamedQuery("getQueryEntityCountByStr");
         query.setParameter("queryStr", request);
         List<Long> resultList = query.getResultList();
+        entityManager.getTransaction().commit();
+        entityManager.close();
         return resultList.get(0) > 0;
     }
 
     @Override
     public List<Vacancy> get(String request) {
+        EntityManager entityManager = factory.createEntityManager();
+        entityManager.getTransaction().begin();
         Query query = entityManager.createNamedQuery("getQueryEntityByQueryStr");
         query.setParameter("queryStr", request);
-        Object o = query.getResultList();
         QueryEntity queryEntity = (QueryEntity) query.getResultList().get(0);
+        if (queryEntity.getResultEntity().size() == 0) {
+            entityManager.refresh(queryEntity);
+        }
+//                                                        entityManager.getTransaction().commit();
         List<Vacancy> vacancyList = new ArrayList<Vacancy>();
-        for(QueryResultEntity resultEntity: queryEntity.getResultEntity()){
+        for (QueryResultEntity resultEntity : queryEntity.getResultEntity()) {
             vacancyList.add(resultEntity.getVacancy());
         }
         log.debug("got " + vacancyList.size() + " vacancies from cache");
+        queryEntity.setQueryCount(queryEntity.getQueryCount() + 1);
+        entityManager.merge(queryEntity);
+        entityManager.getTransaction().commit();
+        entityManager.close();
         return vacancyList;
     }
 
     @Override
     public void put(String request, List<Vacancy> vacancies) {
+        EntityManager entityManager = factory.createEntityManager();
         log.debug("put " + vacancies.size() + " vacancies to cache");
         entityManager.getTransaction().begin();
+        storeInDB(entityManager, request, vacancies, 1);
+        entityManager.getTransaction().commit();
+        entityManager.close();
+        log.debug("done putting to cache");
+    }
+
+    private void storeInDB(EntityManager entityManager, String request, List<Vacancy> vacancies, int count) {
         QueryEntity queryEntity = new QueryEntity();
+        queryEntity.setQueryCount(count);
         queryEntity.setQueryStr(request);
         queryEntity.setQueryLastUpdated(new Timestamp(new Date().getTime()));
         entityManager.persist(queryEntity);
-        for(Vacancy vacancy:vacancies){
+        for (Vacancy vacancy : vacancies) {
             QueryResultEntity queryResultEntity = new QueryResultEntity();
             queryResultEntity.setVacancy(vacancy);
             queryResultEntity.setQueryEntity(queryEntity);
-//            entityManager.persist(queryResultEntity);
-            entityManager.merge(queryResultEntity);
+            entityManager.persist(queryResultEntity);
         }
-//        entityManager.flush();
-        entityManager.getTransaction().commit();
-        log.debug("done putting to cache");
     }
 
     @Override
     public CacheStat getStat() {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        EntityManager entityManager = factory.createEntityManager();
+        entityManager.getTransaction().begin();
+        Query query = entityManager.createNamedQuery("getStat");
+        List<Object> resultList = query.getResultList();
+        CacheStat stat = new CacheStat();
+        for (Object o : resultList) {
+            Object[] array = (Object[]) o;
+            String key = extractKey(array[0]);
+            stat.addQuery(key, (Integer) array[1]);
+        }
+        entityManager.getTransaction().commit();
+        entityManager.close();
+        return stat;
+    }
+
+    private String extractKey(Object o) {
+        String key = "";
+        if (o instanceof String) {
+            String s = (String) o;
+            int lastChar = s.indexOf("&items=");
+            s = s.substring(43, lastChar);
+            try {
+                key = URLDecoder.decode(s, "UTF-8");
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            }
+        }
+        return key;
     }
 
     @Override
     public void clear() {
+        EntityManager entityManager = factory.createEntityManager();
         entityManager.getTransaction().begin();
         Query query = entityManager.createQuery("delete from Salary");
         query.executeUpdate();
@@ -104,25 +144,33 @@ public class DBCache implements ICache {
         query = entityManager.createQuery("delete from ru.workmap.cache.QueryResultEntity");
         query.executeUpdate();
         entityManager.getTransaction().commit();
+        entityManager.close();
     }
 
     @Override
     public void update() {
-        Query query = entityManager.createNamedQuery("getQueryEntityByDate");
-//        String s =Settings.getProperty(Settings.CACHE_UPDATE_TIME);
-//        long cacheExpirePeriod = Long.parseLong(Settings.getProperty(Settings.CACHE_UPDATE_TIME)) * 60 * 60 * 1000;
-        Long goodTimeStart = new Date().getTime() - cacheExpirePeriod;
-        Timestamp timestamp = new Timestamp(goodTimeStart);
-        query.setParameter("date", timestamp);
-        Object o = query.getResultList();
-        QueryEntity queryEntity = (QueryEntity) query.getResultList().get(0);
-        List<Vacancy> vacancyList = new ArrayList<Vacancy>();
-
-
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                EntityManager entityManager = factory.createEntityManager();
+                entityManager.getTransaction().begin();
+                Query query = entityManager.createNamedQuery("getQueryEntityByDate");
+                Long goodTimeStart = new Date().getTime() - cacheExpirePeriod;
+                Timestamp timestamp = new Timestamp(goodTimeStart);
+                query.setParameter("date", timestamp);
+                List<QueryEntity> queryEntityList = query.getResultList();
+                log.debug("updating " + queryEntityList.size() + " records...");
+                for (QueryEntity queryEntity : queryEntityList) {
+                    String key = queryEntity.getQueryStr();
+                    List<Vacancy> vacancyList = HHSearcher.getVacancyList(key);
+                    entityManager.remove(queryEntity);
+                    storeInDB(entityManager, key, vacancyList, queryEntity.getQueryCount());
+                }
+                entityManager.getTransaction().commit();
+                entityManager.close();
+                log.debug("db cache update finished");
+            }
+        }
+        ).start();
     }
-
-//    protected void finalize(){
-//        entityManager.close();
-//    }
-
 }
