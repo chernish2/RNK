@@ -4,7 +4,9 @@ import org.apache.log4j.Logger;
 import org.directwebremoting.WebContext;
 import org.directwebremoting.WebContextFactory;
 import ru.workmap.HHSearcher;
+import ru.workmap.HeadHunter.HHSearchResult;
 import ru.workmap.HeadHunter.Vacancy;
+import ru.workmap.cache.CacheStat;
 
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
@@ -26,14 +28,18 @@ public class MyBean {
     public MyBean() {
     }
 
-    public List<Vacancy> getVacancies(ServletContext context) {
-        List<Vacancy> vacancyList = Collections.EMPTY_LIST;
+    public HHSearchResult getVacancies(ServletContext context) {
+        HHSearchResult hhSearchResult = new HHSearchResult();
         try {
-            vacancyList = getSearcher(context).getVacancies();
+            hhSearchResult = getSearcher(context).getVacancies();
         } catch (Exception e) {
             log.error(e);
         }
-        return vacancyList;
+        return hhSearchResult;
+    }
+
+    public CacheStat getStat(){
+        return getSearcher().getStat();
     }
 
     public void setMapCoords(double centerX, double centerY, double boundX, double boundY, ServletContext context) {
@@ -42,6 +48,10 @@ public class MyBean {
 
     public void setText(String text, ServletContext context) {
         getSearcher(context).setText(text.toLowerCase());
+    }
+
+    public void setStrictSearch(boolean strictSearch){
+        getSearcher().setStrictSearch(strictSearch);
     }
 
 
@@ -66,22 +76,22 @@ public class MyBean {
     }
 
     private HHSearcher getSearcher(ServletContext context) {
-        synchronized (monitor) {
-            log.debug("Entering getSearcher(), " + this);
-            Object o = context.getAttribute(KEY);
-            HHSearcher searcher;
-            if (o == null) {
-//            log.debug("creating HHSearcher");
-                searcher = new HHSearcher();
-//            log.debug("created " + searcher);
-                context.setAttribute(KEY, searcher);
-            } else {
-                searcher = (HHSearcher) o;
-            }
-            log.debug("Finishing getSearcher(), Searcher " + searcher + " for Context " + context + " from MyBean " + this);
-            return searcher;
-
-        }
+//        synchronized (monitor) {
+//            log.debug("Entering getSearcher(), " + this);
+//            Object o = context.getAttribute(KEY);
+//            HHSearcher searcher;
+//            if (o == null) {
+////            log.debug("creating HHSearcher");
+//                searcher = new HHSearcher();
+////            log.debug("created " + searcher);
+//                context.setAttribute(KEY, searcher);
+//            } else {
+//                searcher = (HHSearcher) o;
+//            }
+//            log.debug("Finishing getSearcher(), Searcher " + searcher + " for Context " + context + " from MyBean " + this);
+//            return searcher;
+//        }
+        return getSearcher();
     }
 
 

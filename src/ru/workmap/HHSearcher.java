@@ -1,10 +1,13 @@
 package ru.workmap;
 
 import org.apache.log4j.Logger;
+import ru.workmap.HeadHunter.HHSearchResult;
 import ru.workmap.HeadHunter.Result;
 import ru.workmap.HeadHunter.Vacancy;
+import ru.workmap.cache.CacheStat;
 import ru.workmap.cache.DBCache;
 import ru.workmap.cache.ICache;
+import ru.workmap.cache.RamCache;
 import ru.workmap.util.PageFetcher;
 import ru.workmap.util.Settings;
 import ru.workmap.util.Statistics;
@@ -25,15 +28,17 @@ import java.util.concurrent.*;
 public class HHSearcher implements Serializable{
     private String text;
     private double x0, y0, boundX, boundY; // latitude широта - y; longitude долгота - x
+    private boolean strictSearch;
     private static final Logger log = Logger.getLogger(HHSearcher.class);
-//        private static ICache cacheManager = new RamCache();
-    private static ICache cacheManager = DBCache.getInstance();
+        private static ICache cacheManager = new RamCache();
+//    private static ICache cacheManager = DBCache.getInstance();
 //    private static ICache cacheManager = new NullCache();
     private static final int ITEMS_PER_PAGE = 500;
     //    private static final int MAX_VACANCIES = 100;
     private static final int MAX_VACANCIE_DESCRIPTIONS_IN_ONE_PLACE = 7;
     private static final double RADIUS = 10; // percents!
     private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(Settings.getProperty(Settings.LOCALIZATION_BUNDLE));
+    private static final String searchUrl = "http://api.hh.ru/1/xml/vacancy/search?";
 //    private static Regions regions;
 
     public HHSearcher() {
@@ -51,9 +56,10 @@ public class HHSearcher implements Serializable{
         return vacancyList;
     }
 
-    public List<Vacancy> getVacancies() throws UnsupportedEncodingException {
+    public HHSearchResult getVacancies() throws UnsupportedEncodingException {
+        HHSearchResult searchResult = new HHSearchResult();
         Statistics.search();
-        String key = "http://api.hh.ru/1/xml/vacancy/search?vacancyNameField=true&text=" + URLEncoder.encode(text, "UTF-8") + "&items=" + ITEMS_PER_PAGE;
+        String key = makeUrlStr();
         List<Vacancy> unfilteredVacancies;
         if (cacheManager.contains(key)) {
             unfilteredVacancies = cacheManager.get(key);
@@ -61,8 +67,42 @@ public class HHSearcher implements Serializable{
             unfilteredVacancies = getVacancyList(key);
             cacheManager.put(key, unfilteredVacancies);
         }
+        searchResult.setFoundTotal(unfilteredVacancies.size());
         log.debug(unfilteredVacancies.size() + " unfiltered vacancies");
-        return compressVacancies(filterVacancies(unfilteredVacancies));
+        List<Vacancy> filteredVacancies = filterVacancies(unfilteredVacancies);
+        searchResult.setFoundForMap(filteredVacancies.size());
+        searchResult.setVacancyList(compressVacancies(filteredVacancies));
+        return searchResult;
+    }
+
+    public CacheStat getStat(){
+        return cacheManager.getStat();
+    }
+
+    public void setMapCoords(double centerX, double centerY, double boundX, double boundY) {
+        x0 = centerX;
+        y0 = centerY;
+        this.boundX = boundX;
+        this.boundY = boundY;
+        log.debug("setMapCoords: " + centerX + ":" + centerY + ", " + boundX + ":" + boundY + " for class=" + this);
+    }
+
+    public void setText(String text) {
+        this.text = text;
+        log.debug("setText:" + text + " for class=" + this);
+    }
+
+    public void setStrictSearch(boolean strictSearch) {
+        this.strictSearch = strictSearch;
+    }
+
+    private String makeUrlStr() throws UnsupportedEncodingException {
+        String urlStr = searchUrl;
+        urlStr += "text=" + URLEncoder.encode(text, "UTF-8") + "&items=" + ITEMS_PER_PAGE;
+        if(strictSearch){
+            urlStr += "&vacancyNameField=true";
+        }
+        return urlStr;
     }
 
     private List<Vacancy> filterVacancies(List<Vacancy> unfilteredVacancies) {
@@ -183,18 +223,6 @@ public class HHSearcher implements Serializable{
         return vacancyList;
     }
 
-    public void setMapCoords(double centerX, double centerY, double boundX, double boundY) {
-        x0 = centerX;
-        y0 = centerY;
-        this.boundX = boundX;
-        this.boundY = boundY;
-        log.debug("setMapCoords: " + centerX + ":" + centerY + ", " + boundX + ":" + boundY + " for class=" + this);
-    }
-
-    public void setText(String text) {
-        this.text = text;
-        log.debug("setText:" + text + " for class=" + this);
-    }
 
     private String makeVacanciesString(int size) {
         StringBuilder vacanciesString = new StringBuilder(size + " ");

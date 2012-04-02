@@ -4,6 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.xml.sax.SAXException;
 import ru.workmap.HHSearcher;
+import ru.workmap.HeadHunter.HHSearchResult;
 import ru.workmap.HeadHunter.Vacancy;
 
 import javax.xml.bind.JAXBException;
@@ -26,8 +27,8 @@ public class HHSearcherTest {
         String key = "стилист";
         hhSearcher.setText(key);
         hhSearcher.setMapCoords(0, 0, 180, 180);
-        List<Vacancy> vacancyList = hhSearcher.getVacancies();
-        for (Vacancy vacancy : vacancyList) {
+        HHSearchResult searchResult = hhSearcher.getVacancies();
+        for (Vacancy vacancy : searchResult.getVacancyList()) {
             Assert.assertTrue(vacancy.getDescription().contains(key) || vacancy.getName().contains(key));
         }
     }

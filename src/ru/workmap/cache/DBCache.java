@@ -111,6 +111,7 @@ public class DBCache implements ICache {
         }
         entityManager.getTransaction().commit();
         entityManager.close();
+        stat.setStatInfo("Database cache statistics");
         return stat;
     }
 
@@ -118,8 +119,11 @@ public class DBCache implements ICache {
         String key = "";
         if (o instanceof String) {
             String s = (String) o;
-            int lastChar = s.indexOf("&items=");
-            s = s.substring(43, lastChar);
+            String startString = "text=";
+            int firstChar = s.indexOf(startString);
+            s = s.substring(firstChar + startString.length());
+            int lastChar = s.indexOf("&");
+            s = s.substring(0, lastChar);
             try {
                 key = URLDecoder.decode(s, "UTF-8");
             } catch (UnsupportedEncodingException e) {

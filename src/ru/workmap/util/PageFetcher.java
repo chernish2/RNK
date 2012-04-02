@@ -28,6 +28,8 @@ public class PageFetcher<T extends IHH> implements Callable<T> {
     private Unmarshaller unmarshaller;
     private Logger logger = Logger.getLogger(PageFetcher.class);
     private IHH t;
+    private static int maxRetries = Settings.getPropertyAsInt(Settings.PAGEFETCHER_MAX_RETRIES);
+    private static long onErrorWaitTimeout = Settings.getPropertyAsInt(Settings.PAGEFETCHER_ON_ERROR_WAIT_TIMEOUT) * 1000;
 
     public PageFetcher(String urlStr, IHH t) {
         this.urlStr = urlStr;
@@ -39,7 +41,7 @@ public class PageFetcher<T extends IHH> implements Callable<T> {
         logger.debug("Fetching page " + urlStr);
         T result = null;
         int count = 0;
-        while(result == null && count < 2){
+        while (result == null && count < maxRetries) {
             try {
                 SAXSource source = createSource(urlStr);
                 JAXBContext context = JAXBContext.newInstance(t.getType());
@@ -48,14 +50,14 @@ public class PageFetcher<T extends IHH> implements Callable<T> {
             } catch (Exception e) {
                 count++;
                 try {
-                    Thread.sleep(5000);
+                    Thread.sleep(onErrorWaitTimeout);
                     logger.debug("connection error, retrying " + urlStr);
                 } catch (InterruptedException e1) {
                     e1.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
                 }
             }
         }
-        if(result == null){
+        if (result == null) {
             logger.error("error fetching " + urlStr);
         }
         return result;

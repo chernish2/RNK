@@ -13,6 +13,7 @@ import java.util.TreeMap;
  * To change this template use File | Settings | File Templates.
  */
 public class CacheStat {
+    private String statInfo;
     private Map<String, Integer> statMap = new HashMap<String, Integer>();
     private ValueComparator vc = new ValueComparator(statMap);
 
@@ -37,6 +38,14 @@ public class CacheStat {
                     .append("<br>");
         }
         return sb.toString();
+    }
+
+    public String getStatInfo() {
+        return statInfo;
+    }
+
+    public void setStatInfo(String statInfo) {
+        this.statInfo = statInfo;
     }
 }
 

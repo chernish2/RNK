@@ -15,6 +15,7 @@
         <convert converter="bean" match="ru.workmap.HeadHunter.Region"/>
         <convert converter="bean" match="ru.workmap.HeadHunter.Employer"/>
         <convert converter="bean" match="ru.workmap.HeadHunter.Salary"/>
+        <convert converter="bean" match="ru.workmap.HeadHunter.HHSearchResult"/>
         <convert converter="exception" match="java.lang.Exception"/>
         <convert converter="bean" match="java.lang.StackTraceElement"/>
     </allow>

@@ -48,9 +48,10 @@
             MyBean.setMapCoords(ll.getX(), ll.getY(), spn.getX(), spn.getY());
         }
 
-        function cb(vacancyList) {
+        function cb(hhSearchResult) {
             map.removeAllOverlays();
             msgDiv.innerHTML = "";
+            var vacancyList = hhSearchResult.vacancyList;
             for (i = 0,l = vacancyList.length; i < l; i++) {
                 var vacancy = vacancyList[i];
                 var placemark = new YMaps.Placemark(new YMaps.GeoPoint(vacancy.address.longitude, vacancy.address.latitude));
@@ -69,6 +70,7 @@
             var spn = map.getBounds().getSpan();
             MyBean.setMapCoords(ll.getX(), ll.getY(), spn.getX(), spn.getY());
             MyBean.setText(firstText);
+            MyBean.setStrictSearch(true);
         }
 
         function setText() {

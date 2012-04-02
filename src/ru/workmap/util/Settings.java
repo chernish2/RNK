@@ -18,6 +18,8 @@ public class Settings {
     public static final String CACHE_UPDATE_TIME = "cache_update_time"; //in hours
     public static final String MAX_THREAD_POOL_NUMBER = "max_thread_pool_number";
     public static final String LOCALIZATION_BUNDLE = "bundle";
+    public static final String PAGEFETCHER_MAX_RETRIES = "pagefetcher.max_retries";
+    public static final String PAGEFETCHER_ON_ERROR_WAIT_TIMEOUT = "pagefetcher.on_error_wait_timeout";
     private static final Logger log = Logger.getLogger(Settings.class);
 
     static {
