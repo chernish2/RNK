@@ -1,41 +1,116 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-        "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE html>
 <html>
 <head>
-    <meta content="Работа на карте, вакансии на карте">
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <title>Работа на карте</title>
+    <meta charset="UTF-8">
+    <meta content="Работа на карте, вакансии на карте">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <!-- 1140px Grid styles for IE -->
+    <!--[if lte IE 9]>
+    <link rel="stylesheet" href="css/ie.css" type="text/css" media="screen"/><![endif]-->
+    <!-- The 1140px Grid - http://cssgrid.net/ -->
+    <link rel="stylesheet" href="css/1140.css" type="text/css" media="screen"/>
+    <!-- Your styles -->
+    <link rel="stylesheet" href="css/styles.css" type="text/css" media="screen"/>
+    <!--css3-mediaqueries-js - http://code.google.com/p/css3-mediaqueries-js/ - Enables media queries in some unsupported browsers-->
+    <script src="js/css3-mediaqueries.js"></script>
     <link rel="stylesheet" href="css/reset.css"/>
-    <link rel="stylesheet" href="css/text.css"/>
-    <link rel="stylesheet" href="css/960.css"/>
+    <!--<link rel="stylesheet" href="css/text.css"/>
+    <link rel="stylesheet" href="css/960.css"/>-->
     <link rel="stylesheet" href="css/site.css"/>
+</head>
+<body>
+<header class="container content">
+    <div class="row">
+        <div class="sixcol logo"></div>
+        <div class="sixcol last">
+            <form method="post" action="#" class="searchForm">
+                <fieldset>
+                    <div>
+                        <label>Ищу вакансию:</label>
+                        <input type="text" id="textInput" value="стилист">
+                    </div>
+                    <span><input type="checkbox" id="searchStrict" name="searchStrict">&nbsp;Искать смежные вакансии</span>
+                    <input type="submit" value="Искать">
 
-    <script type="text/javascript" src="http://j.maxmind.com/app/geoip.js"></script>
-    <script src="http://api-maps.yandex.ru/1.1/index.xml?key=AA4rnU4BAAAAe7NpVgIAtqf4KKBB1LupH041c7cZlHoKH-YAAAAAAAAAAAD688Dy35GTPUxy9dydUdPwSgTfcw=="
-            type="text/javascript"></script>
-    <script type="text/javascript"
-            src="dwr/interface/Remote.js"></script>
-    <script type="text/javascript"
-            src="dwr/engine.js"></script>
-    <script type="text/javascript"
-            src="dwr/interface/MyBean.js"></script>
+                    <div class="messageBox" id="messageBox"></div>
 
-    <script type="text/javascript">
-        var map;
-        var textInput;
-        var msgDiv;
-        var firstText = "стилист";
+                </fieldset>
+            </form>
+        </div>
+        <!--<h1>работа на карте - альфа версия</h1>-->
+    </div>
+</header>
+<div class="container" role="main">
+    <div class="row">
+        <div id="YMapsID" class="map"></div>
+    </div>
+</div>
+<footer class="row">
+    <div class="onecol"></div>
+    <div class="tencol">
+        <p class="b-place" style="background: #fff; height:60px; margin-top: 10px; text-align: center;">
+            <script type="text/javascript"><!--
+            google_ad_client = "ca-pub-9397637184929081";
+            /* workmap */
+            google_ad_slot = "1545200188";
+            google_ad_width = 728;
+            google_ad_height = 90;
+            //-->
+            </script>
+            <script type="text/javascript"
+                    src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+            </script>
+        </p>
+    </div>
+    <div class="onecol"></div>
+</footer>
 
-        function init() {
-            textInput = document.getElementById("textInput");
-            if (getCookie("searchString") != null) {
-                textInput.value = getCookie("searchString");
-                firstText = textInput.value;
-            } else {
-                textInput.value = firstText;
-            }
-            msgDiv = document.getElementById("msg");
-            initMap();
+<script src="http://j.maxmind.com/app/geoip.js"></script>
+<script src="http://api-maps.yandex.ru/1.1/index.xml?key=AA4rnU4BAAAAe7NpVgIAtqf4KKBB1LupH041c7cZlHoKH-YAAAAAAAAAAAD688Dy35GTPUxy9dydUdPwSgTfcw=="></script>
+<script src="dwr/interface/Remote.js"></script>
+<script src="dwr/engine.js"></script>
+<script src="dwr/interface/MyBean.js"></script>
+<script src="js/jquery-1.7.2.min.js"></script>
+<script>
+    $(function () {
+        var searchBox = $("#textInput"),
+                storedQuery = getCookie("searchString"),
+                messageBox = $("#messageBox"),
+                strictSearch = $("#searchStrict"),
+                map;
+        initMap();
+        if (storedQuery != null)
+            searchBox.val(storedQuery);
+
+        MyBean.setText(searchBox.val());
+
+        /* Handlers */
+        $(document.body).on("close", function () {
+            setCookie("searchString", searchBox.val());
+        });
+
+        $("input[type=checkbox]").on("click",function(){
+            var isChecked = $(this).is(":checked");
+            $(this).attr("checked", isChecked);
+            $(this).val(isChecked);
+
+
+        });
+
+        $("form").on("submit", function () {
+            setText();
+            return false;
+        });
+
+        function initMap() {
+            map = new YMaps.Map(YMaps.jQuery("#YMapsID")[0]);
+            map.setCenter(new YMaps.GeoPoint(geoip_longitude(), geoip_latitude()), 10);
+            map.addControl(new YMaps.Zoom());
+            map.enableScrollZoom();
+            var ll = map.getCenter();
+            var spn = map.getBounds().getSpan();
+            MyBean.setMapCoords(ll.getX(), ll.getY(), spn.getX(), spn.getY());
             YMaps.Events.observe(map, [map.Events.BoundsChange], function () {
                 setMapCoords();
                 searchVacancies();
@@ -48,11 +123,11 @@
             MyBean.setMapCoords(ll.getX(), ll.getY(), spn.getX(), spn.getY());
         }
 
-        function cb(hhSearchResult) {
+        function cb(searchResult) {
             map.removeAllOverlays();
-            msgDiv.innerHTML = "";
-            var vacancyList = hhSearchResult.vacancyList;
-            for (i = 0,l = vacancyList.length; i < l; i++) {
+            messageBox.html(searchResult.details);
+            var vacancyList = searchResult.vacancyList;
+            for (var i = 0, len = vacancyList.length; i < len; i++) {
                 var vacancy = vacancyList[i];
                 var placemark = new YMaps.Placemark(new YMaps.GeoPoint(vacancy.address.longitude, vacancy.address.latitude));
                 placemark.name = vacancy.nameUrl;
@@ -61,27 +136,16 @@
             }
         }
 
-        function initMap() {
-            map = new YMaps.Map(YMaps.jQuery("#YMapsID")[0]);
-            map.setCenter(new YMaps.GeoPoint(geoip_longitude(), geoip_latitude()), 10);
-            map.addControl(new YMaps.Zoom());
-            map.enableScrollZoom();
-            var ll = map.getCenter();
-            var spn = map.getBounds().getSpan();
-            MyBean.setMapCoords(ll.getX(), ll.getY(), spn.getX(), spn.getY());
-            MyBean.setText(firstText);
-            MyBean.setStrictSearch(true);
-        }
-
         function setText() {
-            MyBean.setText(textInput.value);
+            MyBean.setText(searchBox.val());
             searchVacancies();
         }
 
         function searchVacancies() {
-            msgDiv.innerHTML = "Загружаем " + textInput.value + "...";
+            messageBox.html("Загружаем " + searchBox.val() + "...");
             clearMap();
-            MyBean.getVacancies(cb, {errorHandler: errHandler});
+            MyBean.setStrictSearch(!strictSearch.is(":checked"));
+            MyBean.getVacancies(cb, {errorHandler:errHandler});
         }
 
         function clearMap() {
@@ -98,84 +162,34 @@
         }
 
         function getCookie(name) {
-            var dc = document.cookie;
-            var cname = name + "=";
-            if (dc.length > 0) {
-                begin = dc.indexOf(cname);
+            var cookie = document.cookie;
+            var cookieName = name + "=";
+            if (cookie.length > 0) {
+                var begin = cookie.indexOf(cookieName);
                 if (begin != -1) {
-                    begin += cname.length;
-                    end = dc.indexOf(";", begin);
-                    if (end == -1) end = dc.length;
-                    return unescape(dc.substring(begin, end));
+                    begin += cookieName.length;
+                    var end = cookie.indexOf(";", begin);
+                    if (end == -1) end = cookie.length;
+                    return unescape(cookie.substring(begin, end));
                 }
             }
             return null;
         }
-
-        function onClose() {
-            setCookie("searchString", textInput.value);
-        }
-
-    </script>
-    <script type="text/javascript">
-
-        var _gaq = _gaq || [];
-        _gaq.push(['_setAccount', 'UA-22295795-2']);
-        _gaq.push(['_trackPageview']);
-
-        (function() {
-            var ga = document.createElement('script');
-            ga.type = 'text/javascript';
-            ga.async = true;
-            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-            var s = document.getElementsByTagName('script')[0];
-            s.parentNode.insertBefore(ga, s);
-        })();
-
-    </script>
-
-</head>
-<body onload="init()" onunload="onClose()">
-<div class="container_12 header">
-    <div class="grid_12">
-        <h1>работа на карте - бета</h1>
-    </div>
-</div>
-<div class="clear"></div>
-<div class="container_12 content">
-    <div class="grid_12">
-        <table align="center" border="2">
-            <tr align="center">
-                <td align="right">
-                    Введите ключевое слово:
-                    <input type="text" id="textInput">
-                    <input type="button" onclick="setText()" value="Искать">
-                </td>
-                <td align="left">
-                    <div id="msg" align=""/>
-                </td>
-            </tr>
-        </table>
-
-        <!--<form class="searchForm" action="#" method="post" onsubmit="return false;">-->
-        <!--<fieldset>-->
-        <!--<label for="textInput">текст для поиска вакансий:</label>-->
-        <!--<input type="text" name="textInput" id="textInput"/>-->
-        <!--<input type="button" onclick="setText()" value="искать"/>-->
-        <!--</fieldset>-->
-        <!--</form>-->
-        <!--<span id="msg" style="display: inline-block;"></span>-->
-    </div>
-    <div class="clear"></div>
-
-    <div class="grid_12">
-        <div id="YMapsID" class="map"></div>
-    </div>
-</div>
-<div class="container_12 footer">
-    <div class="grid_12">
-        <a href="mailto:4257998@gmail.com">написать письмо</a>
-    </div>
-</div>
+    });
+</script>
+<script src="js/modernizr.js"></script>
+<script>
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-22295795-2']);
+    _gaq.push(['_trackPageview']);
+    (function () {
+        var ga = document.createElement('script');
+        ga.type = 'text/javascript';
+        ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0];
+        s.parentNode.insertBefore(ga, s);
+    })();
+</script>
 </body>
 </html>

@@ -1,5 +1,7 @@
 package ru.workmap.HeadHunter;
 
+import ru.workmap.HHSearcher;
+
 import java.util.List;
 
 /**
@@ -37,4 +39,12 @@ public class HHSearchResult {
     public void setFoundForMap(int foundForMap) {
         this.foundForMap = foundForMap;
     }
+
+    public String getDetails() {
+        StringBuilder sb = new StringBuilder();
+        sb.append(HHSearcher.RESOURCE_BUNDLE.getString("overall_vacancies")).append(" ").append(HHSearcher.makeVacanciesString(foundTotal));
+        sb.append(", ").append(HHSearcher.RESOURCE_BUNDLE.getString("vacancies_for_map")).append(" ").append(foundForMap);
+        return sb.toString();
+    }
+
 }

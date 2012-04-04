@@ -30,14 +30,14 @@ public class HHSearcher implements Serializable{
     private double x0, y0, boundX, boundY; // latitude широта - y; longitude долгота - x
     private boolean strictSearch;
     private static final Logger log = Logger.getLogger(HHSearcher.class);
-        private static ICache cacheManager = new RamCache();
-//    private static ICache cacheManager = DBCache.getInstance();
+//        private static ICache cacheManager = new RamCache();
+    private static ICache cacheManager = DBCache.getInstance();
 //    private static ICache cacheManager = new NullCache();
     private static final int ITEMS_PER_PAGE = 500;
     //    private static final int MAX_VACANCIES = 100;
     private static final int MAX_VACANCIE_DESCRIPTIONS_IN_ONE_PLACE = 7;
     private static final double RADIUS = 10; // percents!
-    private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(Settings.getProperty(Settings.LOCALIZATION_BUNDLE));
+    public static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(Settings.getProperty(Settings.LOCALIZATION_BUNDLE));
     private static final String searchUrl = "http://api.hh.ru/1/xml/vacancy/search?";
 //    private static Regions regions;
 
@@ -75,7 +75,7 @@ public class HHSearcher implements Serializable{
         return searchResult;
     }
 
-    public CacheStat getStat(){
+    public static CacheStat getStat(){
         return cacheManager.getStat();
     }
 
@@ -224,7 +224,7 @@ public class HHSearcher implements Serializable{
     }
 
 
-    private String makeVacanciesString(int size) {
+    public static String makeVacanciesString(int size) {
         StringBuilder vacanciesString = new StringBuilder(size + " ");
         if (size > 4 && size < 21) {
             vacanciesString.append(RESOURCE_BUNDLE.getString("vacancies2"));

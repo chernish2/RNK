@@ -10,7 +10,7 @@
 <html>
 <head><title>Simple jsp page</title></head>
 <body>
-<%--<%DBCache.getInstance().clear(); %>--%>
+<%DBCache.getInstance().clear(); %>
 DB cache is cleared
 </body>
 </html>

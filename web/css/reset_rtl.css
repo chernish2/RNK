@@ -132,16 +132,16 @@ strong {
   font-weight: bold;
 }
 
-img {
-  color: transparent;
-  font-size: 0;
-  vertical-align: middle;
-/*
-  For IE.
-  http://css-tricks.com/ie-fix-bicubic-scaling-for-images
-*/
-  -ms-interpolation-mode: bicubic;
-}
+/*img {*/
+  /*color: transparent;*/
+  /*font-size: 0;*/
+  /*vertical-align: middle;*/
+/**/
+  /*For IE.*/
+  /*http://css-tricks.com/ie-fix-bicubic-scaling-for-images*/
+/**/
+  /*-ms-interpolation-mode: bicubic;*/
+/*}*/
 
 ol,
 ul {

@@ -1,5 +1,6 @@
 <%@ page import="ru.workmap.util.Statistics" %>
 <%@ page import="ru.workmap.cache.DBCache" %>
+<%@ page import="ru.workmap.HHSearcher" %>
 <%--
   Created by IntelliJ IDEA.
   User: a.chernysh
@@ -20,7 +21,7 @@ Total searches: <%=Statistics.getSearches()%><br>
 Memory: <%=Runtime.getRuntime().freeMemory() / 1024%> kb free out of <%=Runtime.getRuntime().totalMemory() / 1024%> kb
 <br><br>
 Vacancy statistics:<br>
-<%=DBCache.getInstance().getStat().toString()%>
+<%=HHSearcher.getStat().toString()%>
 
 
 
