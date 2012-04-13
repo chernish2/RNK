@@ -41,4 +41,9 @@ public class NullCache implements ICache{
     public void update() {
         //To change body of implemented methods use File | Settings | File Templates.
     }
+
+    @Override
+    public List<String> getSuggestions(String input) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
 }

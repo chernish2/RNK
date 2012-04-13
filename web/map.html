@@ -1,0 +1,43 @@
+<html>
+<head>
+
+</head>
+<body onload="resize()">
+<script src="http://api-maps.yandex.ru/1.1/index.xml?key=ANpUFEkBAAAAf7jmJwMAHGZHrcKNDsbEqEVjEUtCmufxQMwAAAAAAAAAAAAvVrubVT4btztbduoIgTLAeFILaQ=="
+        type="text/javascript"></script>
+<script type="text/javascript">
+
+    var v = viewport();
+    var map;
+
+    document.write("viewport=" + v.width + "x" + v.height);
+    YMaps.jQuery(function () {
+        // —оздание экземпл€ра карты и его прив€зка к созданному контейнеру
+        map = new YMaps.Map(YMaps.jQuery("#YMapsID")[0]);
+
+        // ”становка дл€ карты ее центра и масштаба
+        map.setCenter(new YMaps.GeoPoint(37.64, 55.76), 10);
+    });
+
+
+    function viewport() {
+        var e = window, a = 'inner';
+        if (!( 'innerWidth' in window )) {
+            a = 'client';
+            e = document.documentElement || document.body;
+        }
+        return { width : e[ a + 'Width' ] , height : e[ a + 'Height' ] }
+    }
+
+    function resize(){
+        var s = viewport();
+        var div = document.getElementById("YMapsID");
+        div.style.width = v.width -50 + 'px';
+        div.style.height = v.height -50 + 'px';
+        map.redraw();
+    }
+
+</script>
+<div id="YMapsID" style="width:600px;height:400px"></div>
+</body>
+</html>

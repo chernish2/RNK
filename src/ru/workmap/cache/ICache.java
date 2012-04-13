@@ -23,4 +23,6 @@ public interface ICache {
     public void clear();
 
     public void update();
+
+    public List<String> getSuggestions(String input);
 }

@@ -177,4 +177,9 @@ public class DBCache implements ICache {
         }
         ).start();
     }
+
+    @Override
+    public List<String> getSuggestions(String input) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
 }

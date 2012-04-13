@@ -1,183 +1,154 @@
-<!DOCTYPE html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+        "http://www.w3.org/TR/html4/loose.dtd">
+<meta http-equiv="Content-type" content="text/html;charset=utf-8">
+<meta content="Работа на карте, Вакансии на карте">
+
 <html>
-<head>
-    <title>Работа на карте</title>
-    <meta charset="UTF-8">
-    <meta content="Работа на карте, вакансии на карте">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <!-- 1140px Grid styles for IE -->
-    <!--[if lte IE 9]>
-    <link rel="stylesheet" href="css/ie.css" type="text/css" media="screen"/><![endif]-->
-    <!-- The 1140px Grid - http://cssgrid.net/ -->
-    <link rel="stylesheet" href="css/1140.css" type="text/css" media="screen"/>
-    <!-- Your styles -->
-    <link rel="stylesheet" href="css/styles.css" type="text/css" media="screen"/>
-    <!--css3-mediaqueries-js - http://code.google.com/p/css3-mediaqueries-js/ - Enables media queries in some unsupported browsers-->
-    <script src="js/css3-mediaqueries.js"></script>
-    <link rel="stylesheet" href="css/reset.css"/>
-    <!--<link rel="stylesheet" href="css/text.css"/>
-    <link rel="stylesheet" href="css/960.css"/>-->
-    <link rel="stylesheet" href="css/site.css"/>
-</head>
-<body>
-<header class="container content">
-    <div class="row">
-        <div class="sixcol logo"></div>
-        <div class="sixcol last">
-            <form method="post" action="#" class="searchForm">
-                <fieldset>
-                    <div>
-                        <label>Ищу вакансию:</label>
-                        <input type="text" id="textInput" value="стилист">
-                    </div>
-                    <span><input type="checkbox" id="searchStrict" name="searchStrict">&nbsp;Искать смежные вакансии</span>
-                    <input type="submit" value="Искать">
-
-                    <div class="messageBox" id="messageBox"></div>
-
-                </fieldset>
-            </form>
-        </div>
-        <!--<h1>работа на карте - альфа версия</h1>-->
-    </div>
-</header>
-<div class="container" role="main">
-    <div class="row">
-        <div id="YMapsID" class="map"></div>
-    </div>
-</div>
-<footer class="row">
-    <div class="onecol"></div>
-    <div class="tencol">
-        <p class="b-place" style="background: #fff; height:60px; margin-top: 10px; text-align: center;">
-            <script type="text/javascript"><!--
-            google_ad_client = "ca-pub-9397637184929081";
-            /* workmap */
-            google_ad_slot = "1545200188";
-            google_ad_width = 728;
-            google_ad_height = 90;
-            //-->
-            </script>
-            <script type="text/javascript"
-                    src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
-            </script>
-        </p>
-    </div>
-    <div class="onecol"></div>
-</footer>
-
 <script src="http://j.maxmind.com/app/geoip.js"></script>
 <script src="http://api-maps.yandex.ru/1.1/index.xml?key=AA4rnU4BAAAAe7NpVgIAtqf4KKBB1LupH041c7cZlHoKH-YAAAAAAAAAAAD688Dy35GTPUxy9dydUdPwSgTfcw=="></script>
 <script src="dwr/interface/Remote.js"></script>
 <script src="dwr/engine.js"></script>
 <script src="dwr/interface/MyBean.js"></script>
-<script src="js/jquery-1.7.2.min.js"></script>
-<script>
-    $(function () {
-        var searchBox = $("#textInput"),
-                storedQuery = getCookie("searchString"),
-                messageBox = $("#messageBox"),
-                strictSearch = $("#searchStrict"),
-                map;
+
+<script type="text/javascript">
+
+    var searchBox;
+    var messageBox;
+    var strictSearch;
+    var map;
+
+    function init() {
+        window.onresize = function() {
+            initMap();
+        };
+        strictSearch = document.getElementById("searchStrict");
+        searchBox = document.getElementById("textInput");
+        messageBox = document.getElementById("messageBox");
+        var lastSearch = getCookie("searchString");
+        if (lastSearch != null) {
+            searchBox.value = lastSearch;
+        }
         initMap();
-        if (storedQuery != null)
-            searchBox.val(storedQuery);
+    }
 
-        MyBean.setText(searchBox.val());
-
-        /* Handlers */
-        $(document.body).on("close", function () {
-            setCookie("searchString", searchBox.val());
-        });
-
-        $("input[type=checkbox]").on("click",function(){
-            var isChecked = $(this).is(":checked");
-            $(this).attr("checked", isChecked);
-            $(this).val(isChecked);
-
-
-        });
-
-        $("form").on("submit", function () {
+    function initMap() {
+        map = new YMaps.Map(YMaps.jQuery("#YMapsID")[0]);
+        map.setCenter(new YMaps.GeoPoint(geoip_longitude(), geoip_latitude()), 10);
+        map.addControl(new YMaps.Zoom());
+        map.enableScrollZoom();
+        YMaps.Events.observe(map, [map.Events.BoundsChange], function () {
+            setMapCoords();
             setText();
-            return false;
         });
+        var v = viewport();
+        var div = document.getElementById("YMapsID");
+        div.style.width = v.width - 50 + 'px';
+        div.style.height = v.height - 240 + 'px';
+        map.redraw();
+        var ll = map.getCenter();
+        var spn = map.getBounds().getSpan();
+        MyBean.setMapCoords(ll.getX(), ll.getY(), spn.getX(), spn.getY());
+    }
 
-        function initMap() {
-            map = new YMaps.Map(YMaps.jQuery("#YMapsID")[0]);
-            map.setCenter(new YMaps.GeoPoint(geoip_longitude(), geoip_latitude()), 10);
-            map.addControl(new YMaps.Zoom());
-            map.enableScrollZoom();
-            var ll = map.getCenter();
-            var spn = map.getBounds().getSpan();
-            MyBean.setMapCoords(ll.getX(), ll.getY(), spn.getX(), spn.getY());
-            YMaps.Events.observe(map, [map.Events.BoundsChange], function () {
-                setMapCoords();
-                searchVacancies();
-            });
+    function setMapCoords() {
+        var ll = map.getCenter();
+        var spn = map.getBounds().getSpan();
+        MyBean.setMapCoords(ll.getX(), ll.getY(), spn.getX(), spn.getY());
+    }
+
+    function cb(searchResult) {
+        map.removeAllOverlays();
+        messageBox.innerHTML = searchResult.details;
+        var vacancyList = searchResult.vacancyList;
+        for (var i = 0, len = vacancyList.length; i < len; i++) {
+            var vacancy = vacancyList[i];
+            var placemark = new YMaps.Placemark(new YMaps.GeoPoint(vacancy.address.longitude, vacancy.address.latitude));
+            placemark.name = vacancy.nameUrl;
+            placemark.description = vacancy.description;
+            map.addOverlay(placemark);
         }
+    }
 
-        function setMapCoords() {
-            var ll = map.getCenter();
-            var spn = map.getBounds().getSpan();
-            MyBean.setMapCoords(ll.getX(), ll.getY(), spn.getX(), spn.getY());
-        }
+    function setText() {
+        MyBean.setText(searchBox.value);
+        searchVacancies();
+    }
 
-        function cb(searchResult) {
-            map.removeAllOverlays();
-            messageBox.html(searchResult.details);
-            var vacancyList = searchResult.vacancyList;
-            for (var i = 0, len = vacancyList.length; i < len; i++) {
-                var vacancy = vacancyList[i];
-                var placemark = new YMaps.Placemark(new YMaps.GeoPoint(vacancy.address.longitude, vacancy.address.latitude));
-                placemark.name = vacancy.nameUrl;
-                placemark.description = vacancy.description;
-                map.addOverlay(placemark);
-            }
-        }
-
-        function setText() {
-            MyBean.setText(searchBox.val());
-            searchVacancies();
-        }
-
-        function searchVacancies() {
-            messageBox.html("Загружаем " + searchBox.val() + "...");
+    function searchVacancies() {
+        if (searchBox.value.length > 0) {
+            messageBox.innerHTML = "Загружаем " + searchBox.value + "...";
             clearMap();
-            MyBean.setStrictSearch(!strictSearch.is(":checked"));
+            MyBean.setStrictSearch(!strictSearch.checked);
             MyBean.getVacancies(cb, {errorHandler:errHandler});
         }
+    }
 
-        function clearMap() {
-            map.removeAllOverlays();
-        }
+    function clearMap() {
+        map.removeAllOverlays();
+    }
 
-        function errHandler(msg, exc) {
-            alert("Error message is: " + msg + " - Error Details: "
-                    + dwr.util.toDescriptiveString(exc, 2));
-        }
+    function errHandler(msg, exc) {
+        alert("Error message is: " + msg + " - Error Details: "
+                + dwr.util.toDescriptiveString(exc, 2));
+    }
 
-        function setCookie(name, value) {
-            document.cookie = name + "=" + escape(value) + "; path=/";
-        }
+    function setCookie(name, value) {
+        document.cookie = name + "=" + escape(value) + "; path=/";
+    }
 
-        function getCookie(name) {
-            var cookie = document.cookie;
-            var cookieName = name + "=";
-            if (cookie.length > 0) {
-                var begin = cookie.indexOf(cookieName);
-                if (begin != -1) {
-                    begin += cookieName.length;
-                    var end = cookie.indexOf(";", begin);
-                    if (end == -1) end = cookie.length;
-                    return unescape(cookie.substring(begin, end));
-                }
+    function getCookie(name) {
+        var cookie = document.cookie;
+        var cookieName = name + "=";
+        if (cookie.length > 0) {
+            var begin = cookie.indexOf(cookieName);
+            if (begin != -1) {
+                begin += cookieName.length;
+                var end = cookie.indexOf(";", begin);
+                if (end == -1) end = cookie.length;
+                return unescape(cookie.substring(begin, end));
             }
-            return null;
         }
-    });
+        return null;
+    }
+
+    function viewport() {
+        var e = window, a = 'inner';
+        if (!( 'innerWidth' in window )) {
+            a = 'client';
+            e = document.documentElement || document.body;
+        }
+        return { width : e[ a + 'Width' ] , height : e[ a + 'Height' ] }
+    }
+
+    function onKeyUp(event) {
+        var code = event.keyCode;
+        if (code == 13) {
+            setText();
+        } else {
+//            MyBean.getSuggestions(searchBox.value, suggestionCallback);
+        }
+    }
+
+    //    function suggestionCallback(suggestions) {
+    //        if (suggestions.length > 0) {
+    //            document.getElementById("suggestions").style.display = "block";
+    //            var sList = document.getElementById("suggestionsList");
+    //            var ul = document.createElement('ul');
+    //            for (var i = 0; i < suggestions.length; i++) {
+    //                var li = document.createElement('li');
+    //                li.innerHTML = msg[i];
+    //                li.onclick = bindFunction(suggestions[i]);
+    //                ul.appendChild(li);
+    //            }
+    //        }
+    //    }
+
+    function onClose() {
+        setCookie("searchString", searchBox.value);
+    }
+
+
 </script>
-<script src="js/modernizr.js"></script>
 <script>
     var _gaq = _gaq || [];
     _gaq.push(['_setAccount', 'UA-22295795-2']);
@@ -191,5 +162,62 @@
         s.parentNode.insertBefore(ga, s);
     })();
 </script>
+
+
+<head>
+    <title>Работа на карте</title>
+    <link rel="stylesheet" href="css/test.css" type="text/css"/>
+    <link rel="shortcut icon" href="img/32.ico" type="image/x-icon"/>
+
+</head>
+<body onload="init()" onunload="onClose()">
+<table border="0" align="center">
+    <tr>
+        <td align="center" rowspan="2">
+            <img src="img/logo_small.png">
+        </td>
+        <td align="center">
+            <label>Ищу вакансию:</label>
+
+            <input type="text" id="textInput" onkeyup="onKeyUp(event);">
+
+            <!--<div class="suggestionsBox" id="suggestions" style="display: none;">-->
+            <!--<div class="suggestionList" id="suggestionsList"></div>-->
+                                <span><input type="checkbox" id="searchStrict"
+                                             name="searchStrict">&nbsp;Искать смежные вакансии</span>
+            <input type="submit" value="Искать" onclick="setText();">
+        </td>
+    </tr>
+    <tr>
+        <td align="center">
+            <div id="messageBox">&nbsp;</div>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2">
+            <!--style="width: 800px;height: 600px;float: left;background-color: #7fffd4;"-->
+            <div id="YMapsID"></div>
+        </td>
+    </tr>
+    <tr>
+        <td colspan="2" align="center">
+            <div>
+                <script type="text/javascript"><!--
+                google_ad_client = "ca-pub-9397637184929081";
+                /* workmap */
+                google_ad_slot = "1545200188";
+                google_ad_width = 728;
+                google_ad_height = 90;
+                //-->
+                </script>
+                <script type="text/javascript"
+                        src="http://pagead2.googlesyndication.com/pagead/show_ads.js">
+                </script>
+            </div>
+
+        </td>
+    </tr>
+
+</table>
 </body>
 </html>

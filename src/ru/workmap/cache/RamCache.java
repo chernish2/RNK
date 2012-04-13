@@ -69,6 +69,11 @@ public class RamCache implements ICache {
         //To change body of implemented methods use File | Settings | File Templates.
     }
 
+    @Override
+    public List<String> getSuggestions(String input) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     private long getFreeMemory() {
         return Runtime.getRuntime().freeMemory() / 1024;
     }

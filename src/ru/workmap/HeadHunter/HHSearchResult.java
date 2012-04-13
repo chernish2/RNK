@@ -2,6 +2,8 @@ package ru.workmap.HeadHunter;
 
 import ru.workmap.HHSearcher;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -12,9 +14,10 @@ import java.util.List;
  * To change this template use File | Settings | File Templates.
  */
 public class HHSearchResult {
-    private List<Vacancy> vacancyList;
+    private List<Vacancy> vacancyList = Collections.EMPTY_LIST;
     private int foundTotal;
     private int foundForMap;
+    private int averageSalary;
 
     public List<Vacancy> getVacancyList() {
         return vacancyList;
@@ -42,9 +45,24 @@ public class HHSearchResult {
 
     public String getDetails() {
         StringBuilder sb = new StringBuilder();
-        sb.append(HHSearcher.RESOURCE_BUNDLE.getString("overall_vacancies")).append(" ").append(HHSearcher.makeVacanciesString(foundTotal));
-        sb.append(", ").append(HHSearcher.RESOURCE_BUNDLE.getString("vacancies_for_map")).append(" ").append(foundForMap);
+        if (foundTotal > 0){
+            sb.append(HHSearcher.RESOURCE_BUNDLE.getString("overall_vacancies")).append(" ").append(HHSearcher.makeVacanciesString(foundTotal));
+            sb.append(", ").append(HHSearcher.RESOURCE_BUNDLE.getString("vacancies_for_map")).append(" ").append(foundForMap);
+            if (averageSalary> 0) {
+                sb.append(", " + HHSearcher.RESOURCE_BUNDLE.getString("average_salary")).append(" ").append(averageSalary);
+            }
+        }
+        else{
+            sb.append(HHSearcher.RESOURCE_BUNDLE.getString("zero_vacancies"));
+        }
         return sb.toString();
     }
 
+    public int getAverageSalary() {
+        return averageSalary;
+    }
+
+    public void setAverageSalary(int averageSalary) {
+        this.averageSalary = averageSalary;
+    }
 }

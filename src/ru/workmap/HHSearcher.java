@@ -3,6 +3,7 @@ package ru.workmap;
 import org.apache.log4j.Logger;
 import ru.workmap.HeadHunter.HHSearchResult;
 import ru.workmap.HeadHunter.Result;
+import ru.workmap.HeadHunter.Salary;
 import ru.workmap.HeadHunter.Vacancy;
 import ru.workmap.cache.CacheStat;
 import ru.workmap.cache.DBCache;
@@ -56,6 +57,10 @@ public class HHSearcher implements Serializable{
         return vacancyList;
     }
 
+    public static List<String> getSuggestions(String input){
+        return cacheManager.getSuggestions(input);
+    }
+
     public HHSearchResult getVacancies() throws UnsupportedEncodingException {
         HHSearchResult searchResult = new HHSearchResult();
         Statistics.search();
@@ -71,6 +76,7 @@ public class HHSearcher implements Serializable{
         log.debug(unfilteredVacancies.size() + " unfiltered vacancies");
         List<Vacancy> filteredVacancies = filterVacancies(unfilteredVacancies);
         searchResult.setFoundForMap(filteredVacancies.size());
+        searchResult.setAverageSalary(calculateAverageSalary(filteredVacancies));
         searchResult.setVacancyList(compressVacancies(filteredVacancies));
         return searchResult;
     }
@@ -94,6 +100,27 @@ public class HHSearcher implements Serializable{
 
     public void setStrictSearch(boolean strictSearch) {
         this.strictSearch = strictSearch;
+    }
+
+    private int calculateAverageSalary(List<Vacancy> vacancyList){
+        int averageSalary = 0;
+        int count = 0;
+        int sum = 0;
+        for(Vacancy vacancy: vacancyList){
+            Salary salary = vacancy.getSalary();
+            if(salary.getFrom() != 0){
+                sum += salary.getFrom();
+                count++;
+            }
+            if(salary.getTo() != 0){
+                sum += salary.getTo();
+                count++;
+            }
+        }
+        if(count > 0){
+            averageSalary = sum / count;
+        }
+        return averageSalary;
     }
 
     private String makeUrlStr() throws UnsupportedEncodingException {

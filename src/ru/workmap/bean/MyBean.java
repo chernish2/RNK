@@ -39,7 +39,7 @@ public class MyBean {
     }
 
     public CacheStat getStat(){
-        return getSearcher().getStat();
+        return HHSearcher.getStat();
     }
 
     public void setMapCoords(double centerX, double centerY, double boundX, double boundY, ServletContext context) {
@@ -52,6 +52,10 @@ public class MyBean {
 
     public void setStrictSearch(boolean strictSearch){
         getSearcher().setStrictSearch(strictSearch);
+    }
+
+    public List<String> getSuggestions(String input){
+        return HHSearcher.getSuggestions(input);
     }
 
 
